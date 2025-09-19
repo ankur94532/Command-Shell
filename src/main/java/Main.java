@@ -7,13 +7,15 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         while (true) {
             String input = scanner.nextLine();
-            String str = input.substring(0, 4);
-            if (str.equals("echo")) {
-                System.out.println(input.substring(5));
-            } else if (input.equals("exit 0")) {
-                System.exit(0);
+            if (input.substring(0, 4).equals("type")) {
+                String str = input.substring(5, 8);
+                if (str.equals("echo") || str.equals("exit")) {
+                    System.out.println(str + " is a shell bulletin");
+                } else {
+                    System.out.println(input + ": not found");
+                }
             } else {
-                System.out.println(input + ": command not found");
+                System.out.println(input + ": not found");
             }
             System.out.print("$ ");
         }
