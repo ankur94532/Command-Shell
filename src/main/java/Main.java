@@ -8,7 +8,7 @@ public class Main {
         while (true) {
             String input = scanner.nextLine();
             System.out.println(input.substring(0, 6));
-            if (input.substring(0, 4) == "echo") {
+            if (input.substring(0, 5) == "echo") {
                 System.out.println(input.substring(5));
             } else {
                 System.out.println(input + ": command not found");
