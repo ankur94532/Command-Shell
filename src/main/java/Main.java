@@ -22,7 +22,7 @@ public class Main {
             } else {
                 System.out.println(input + ": not found");
             }
-            System.out.print("$");
+            System.out.print("$ ");
         }
     }
 }
