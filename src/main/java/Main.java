@@ -13,7 +13,7 @@ public class Main {
                 if (str.equals("echo") || str.equals("exit") || str.equals("type")) {
                     System.out.println(str + " is a shell builtin");
                 } else {
-                    System.out.println(input.substring(5) + ": not found");
+                    System.out.println(input.substring(5) + " is /bin/" + input.substring(5));
                 }
             } else if (str1.equals("echo")) {
                 System.out.println(input.substring(5));
