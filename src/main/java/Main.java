@@ -7,6 +7,7 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         while (true) {
             String input = scanner.nextLine();
+            System.out.println(input.substring(0, 4));
             if (input.substring(0, 4) == "echo") {
                 System.out.println(input.substring(5));
             } else {
