@@ -7,7 +7,11 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         while (true) {
             String input = scanner.nextLine();
-            System.out.println(input.substring(5));
+            if (input.substring(0, 3) == "echo") {
+                System.out.println(input.substring(5));
+            } else {
+                System.out.println(input + ": command not found");
+            }
             System.out.print("$ ");
         }
 
