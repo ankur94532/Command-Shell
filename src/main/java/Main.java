@@ -8,8 +8,7 @@ public class Main {
         while (true) {
             String input = scanner.nextLine();
             if (input.substring(0, 4).equals("type")) {
-                System.out.println("hlo");
-                String str = input.substring(5, 8);
+                String str = input.substring(5, 9);
                 if (str.equals("echo") || str.equals("exit")) {
                     System.out.println(str + " is a shell bulletin");
                 } else {
