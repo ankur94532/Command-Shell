@@ -10,7 +10,7 @@ public class Main {
             if (input.substring(0, 4).equals("type")) {
                 String str = input.substring(5, 9);
                 if (str.equals("echo") || str.equals("exit")) {
-                    System.out.println(str + " is a shell bulletin");
+                    System.out.println(str + " is a shell builtin");
                 } else {
                     System.out.println(input + ": not found");
                 }
