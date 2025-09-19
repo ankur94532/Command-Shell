@@ -10,6 +10,8 @@ public class Main {
             String str = input.substring(0, 4);
             if (str.equals("echo")) {
                 System.out.println(input.substring(5));
+            } else if (input.equals("exit 0")) {
+                System.exit(0);
             } else {
                 System.out.println(input + ": command not found");
             }
