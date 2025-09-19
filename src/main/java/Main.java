@@ -9,7 +9,7 @@ public class Main {
             String input = scanner.nextLine();
             String str1 = input.substring(0, 4);
             if (str1.equals("type")) {
-                String str = input.substring(5, 9);
+                String str = input.substring(5);
                 if (str.equals("echo") || str.equals("exit") || str.equals("type")) {
                     System.out.println(str + " is a shell builtin");
                 } else {
