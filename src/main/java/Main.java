@@ -1,5 +1,6 @@
 import java.util.Scanner;
 import java.io.File;
+import java.nio.file.Path;
 
 public class Main {
     public static void main(String[] args) throws Exception {
@@ -8,6 +9,11 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         while (true) {
             String input = scanner.nextLine();
+            if (input.split(" ")[0].equals("pwd")) {
+                System.out.println(Path.of("").toAbsolutePath());
+                System.out.print("$ ");
+                continue;
+            }
             if (check(input)) {
                 Process process = Runtime.getRuntime().exec(input.split(" "));
                 process.getInputStream().transferTo(System.out);
