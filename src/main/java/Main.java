@@ -20,6 +20,7 @@ public class Main {
             if (input.split(" ")[0].equals("cat")) {
                 String[] files = input.split(" ");
                 for (int i = 1; i < files.length; i++) {
+                    System.out.println(files[i]);
                     content(files[i]);
                 }
                 System.out.println();
