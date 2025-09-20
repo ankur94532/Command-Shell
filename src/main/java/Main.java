@@ -1,4 +1,5 @@
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Deque;
 import java.util.Scanner;
 import java.io.File;
@@ -18,7 +19,7 @@ public class Main {
                 continue;
             }
             if (input.split(" ")[0].equals("cat")) {
-                String[] files = input.split(" ");
+                String[] files = convert(input);
                 for (int i = 1; i < files.length; i++) {
                     System.out.println(files[i]);
                     content(files[i]);
@@ -82,6 +83,26 @@ public class Main {
             }
             System.out.print("$ ");
         }
+    }
+
+    static String[] convert(String input) {
+        Deque<String> response = new ArrayDeque<>();
+        int ind = 0;
+        while (ind < input.length()) {
+            if (input.charAt(ind) == '\'') {
+                ind++;
+                StringBuilder sb = new StringBuilder();
+                while (input.charAt(ind) != '\'') {
+                    sb.append(input.charAt(ind));
+                    ind++;
+                }
+                ind++;
+                response.offerLast(sb.toString());
+            } else {
+                ind++;
+            }
+        }
+        return response.toArray(new String[response.size()]);
     }
 
     static void content(String file) {
