@@ -23,7 +23,7 @@ public class Main {
                 for (int i = 0; i < files.length; i++) {
                     content(files[i]);
                 }
-                System.out.println();
+
                 System.out.print("$ ");
                 continue;
             }
