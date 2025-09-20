@@ -163,7 +163,7 @@ public class Main {
             } else {
                 StringBuilder sb = new StringBuilder();
                 while (ind < input.length() && input.charAt(ind) != ' ' && input.charAt(ind) != '\''
-                        && input.charAt(ind) != '"') {
+                        && input.charAt(ind) != '"' && input.charAt(ind) != '\\') {
                     sb.append(input.charAt(ind));
                     ind++;
                 }
