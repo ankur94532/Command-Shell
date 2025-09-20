@@ -14,10 +14,11 @@ public class Main {
             if (input.split(" ")[0].equals("cd")) {
                 String path = input.split(" ")[1];
                 path = exists(path);
+                System.out.println(path);
                 if (path != null) {
                     System.setProperty("user.dir", path);
                 } else {
-                    System.out.println("cd: " + path + ": No such file or directory");
+                    System.out.println("cd: " + input.split(" ")[1] + ": No such file or directory");
                 }
                 System.out.print("$ ");
                 continue;
