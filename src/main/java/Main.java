@@ -21,7 +21,6 @@ public class Main {
             if (input.split(" ")[0].equals("cat")) {
                 String[] files = convert(input);
                 for (int i = 0; i < files.length; i++) {
-                    System.out.println(files[i]);
                     content(files[i]);
                 }
                 System.out.println();
@@ -106,12 +105,9 @@ public class Main {
     }
 
     static void content(String file) {
-        System.out.println("hlo");
-        String str = file.substring(1, file.length() - 1);
-        System.out.println(str);
         Process p;
         try {
-            p = new ProcessBuilder("cat", str)
+            p = new ProcessBuilder("cat", file)
                     .redirectErrorStream(true) // merge stderr into stdout
                     .start();
             p.getInputStream().transferTo(System.out);
