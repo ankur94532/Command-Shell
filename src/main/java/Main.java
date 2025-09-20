@@ -1,3 +1,5 @@
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.Scanner;
 import java.io.File;
 import java.nio.file.Path;
@@ -9,17 +11,7 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         while (true) {
             String input = scanner.nextLine();
-            if (input.split(" ")[0].equals("cd")) {
-                String path = input.split(" ")[1];
-                path = exists(path);
-                if (path != null) {
-                    System.setProperty("user.dir", path);
-                } else {
-                    System.out.println("cd: " + input.split(" ")[1] + ": No such file or directory");
-                }
-                System.out.print("$ ");
-                continue;
-            }
+            change(input.split(" ")[1]);
             if (input.equals("pwd")) {
                 System.out.println(System.getProperty("user.dir"));
                 System.out.print("$ ");
@@ -53,6 +45,40 @@ public class Main {
             }
             System.out.print("$ ");
         }
+    }
+
+    static void change(String input) {
+        String path = System.getProperty("user.dir");
+        Deque<String> dq = new ArrayDeque<>();
+        String[] paths = path.split("/");
+        for (int i = 0; i < paths.length; i++) {
+            dq.offer(paths[i]);
+        }
+        int ind = 0;
+        while (ind < input.length()) {
+            if (ind + 2 < input.length() && input.substring(ind, ind + 3).equals("../")) {
+                dq.pollLast();
+                ind += 3;
+                continue;
+            } else if (input.charAt(ind) == '/') {
+                ind++;
+                StringBuilder sb = new StringBuilder("");
+                while (ind < input.length() && input.charAt(ind) != '/') {
+                    sb.append(input.charAt(ind));
+                    ind++;
+                }
+                dq.offer(sb.toString());
+            } else {
+                ind++;
+            }
+        }
+        StringBuilder sb = new StringBuilder("");
+        while (dq.size() > 0) {
+            sb.append('/');
+            sb.append(dq.peekFirst());
+            dq.pollFirst();
+        }
+        System.setProperty("user.dir", sb.toString());
     }
 
     static String exists(String input) {
