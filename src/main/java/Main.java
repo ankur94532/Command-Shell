@@ -33,8 +33,8 @@ public class Main {
         String ans = "";
         for (int i = 0; i < commands.length; i++) {
             File file = new File(commands[i], str);
-            if (file.exists()) {
-                ans = str + " is " + file.getAbsolutePath();
+            if (file.exists() && file.canExecute()) {
+                return str + " is " + file.getAbsolutePath();
             }
         }
         return ans;
