@@ -9,13 +9,14 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         while (true) {
             String input = scanner.nextLine();
+            System.out.print("$ ");
             String directory = "";
             if (input.split(" ")[0].equals("cd")) {
                 String path = input.split(" ")[1];
                 if (exists(path)) {
                     directory = path;
                 } else {
-                    System.out.println("$ cd: " + path + ": No such file or directory");
+                    System.out.println("cd: " + path + ": No such file or directory");
                 }
                 System.out.print("$ ");
                 continue;
