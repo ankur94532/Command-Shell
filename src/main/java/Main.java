@@ -30,7 +30,7 @@ public class Main {
             if (input.charAt(0) == '\'') {
                 int ind = 1;
                 for (int i = 1; i < input.length(); i++) {
-                    if (input.charAt(ind) == '\'') {
+                    if (input.charAt(i) == '\'') {
                         ind = i;
                         break;
                     }
@@ -47,7 +47,7 @@ public class Main {
             if (input.charAt(0) == '"') {
                 int ind = 1;
                 for (int i = 1; i < input.length(); i++) {
-                    if (input.charAt(ind) == '"') {
+                    if (input.charAt(i) == '"') {
                         ind = i;
                         break;
                     }
