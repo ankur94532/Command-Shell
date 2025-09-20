@@ -11,7 +11,21 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         while (true) {
             String input = scanner.nextLine();
-            change(input.split(" ")[1]);
+            if (input.split(" ")[0].equals("cd")) {
+                String path = input.split(" ")[1];
+                if (path.charAt(0) == '.') {
+                    change(path);
+                }
+                path = exists(path);
+                if (path != null) {
+                    System.setProperty("user.dir", path);
+                } else {
+                    System.out.println(
+                            "cd: " + input.split(" ")[1] + ": No such file or directory");
+                }
+                System.out.print("$ ");
+                continue;
+            }
             if (input.equals("pwd")) {
                 System.out.println(System.getProperty("user.dir"));
                 System.out.print("$ ");
