@@ -11,6 +11,7 @@ public class Main {
             if (check(input)) {
                 Process process = Runtime.getRuntime().exec(input.split(" "));
                 process.getInputStream().transferTo(System.out);
+                System.out.print("$ ");
                 continue;
             }
             String str1 = input.substring(0, 4);
