@@ -11,6 +11,7 @@ public class Main {
             String input = scanner.nextLine();
             System.out.println(input.split(" ")[0]);
             if (input.split(" ")[0].equals("pwd")) {
+                System.out.println("hi");
                 System.out.println(Path.of("").toAbsolutePath());
                 System.out.print("$ ");
                 continue;
