@@ -97,6 +97,15 @@ public class Main {
                 }
                 ind++;
                 response.offerLast(sb.toString());
+            } else if (input.charAt(ind) == '"') {
+                ind++;
+                StringBuilder sb = new StringBuilder();
+                while (input.charAt(ind) != '"') {
+                    sb.append(input.charAt(ind));
+                    ind++;
+                }
+                ind++;
+                response.offerLast(sb.toString());
             } else {
                 ind++;
             }
@@ -120,7 +129,16 @@ public class Main {
         Deque<String> dq = new ArrayDeque<>();
         int ind = 0;
         while (ind < input.length()) {
-            if (input.charAt(ind) == '\'') {
+            if (input.charAt(ind) == '"') {
+                StringBuilder sb = new StringBuilder();
+                ind++;
+                while (ind != input.length() && input.charAt(ind) != '"') {
+                    sb.append(input.charAt(ind));
+                    ind++;
+                }
+                ind++;
+                dq.offerLast(sb.toString());
+            } else if (input.charAt(ind) == '\'') {
                 StringBuilder sb = new StringBuilder();
                 ind++;
                 while (ind != input.length() && input.charAt(ind) != '\'') {
