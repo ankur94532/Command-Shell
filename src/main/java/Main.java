@@ -8,9 +8,10 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         while (true) {
             String input = scanner.nextLine();
-            File file = check(input);
-            if (file != null) {
-                System.out.println(file.getAbsoluteFile());
+            if (check(input)) {
+                Process process = Runtime.getRuntime().exec(input.split(" "));
+                process.getInputStream().transferTo(System.out);
+                continue;
             }
             String str1 = input.substring(0, 4);
             if (str1.equals("type")) {
@@ -31,17 +32,17 @@ public class Main {
         }
     }
 
-    static File check(String input) {
+    static boolean check(String input) {
         String[] inputs = input.split(" ");
         String path = System.getenv("PATH");
         String[] commands = path.split(":");
         for (int i = 0; i < commands.length; i++) {
             File file = new File(commands[i], inputs[0]);
             if (file.exists() && file.canExecute()) {
-                return file;
+                return true;
             }
         }
-        return null;
+        return false;
     }
 
     static String find(String str) {
