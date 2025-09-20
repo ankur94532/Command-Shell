@@ -100,7 +100,7 @@ public class Main {
                 ind++;
             } else {
                 StringBuilder sb = new StringBuilder();
-                while (input.charAt(ind) != ' ' && input.charAt(ind) != '\'') {
+                while (ind < input.length() && input.charAt(ind) != ' ' && input.charAt(ind) != '\'') {
                     sb.append(input.charAt(ind));
                     ind++;
                 }
