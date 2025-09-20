@@ -137,7 +137,6 @@ public class Main {
                     ind++;
                 }
                 ind++;
-                System.out.println(sb.toString());
                 dq.offerLast(sb.toString());
             } else if (input.charAt(ind) == '\'') {
                 StringBuilder sb = new StringBuilder();
