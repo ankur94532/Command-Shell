@@ -86,6 +86,7 @@ public class Main {
     static void content(String file) {
         System.out.println("hlo");
         String str = file.substring(1, file.length() - 1);
+        System.out.println(str);
         Process p;
         try {
             p = new ProcessBuilder("cat", str)
