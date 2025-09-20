@@ -30,12 +30,13 @@ public class Main {
     static String find(String str) {
         String path = System.getenv("PATH");
         String[] commands = path.split(":");
+        String ans = "";
         for (int i = 0; i < commands.length; i++) {
             File file = new File(commands[i], str);
             if (file.exists()) {
-                return str + " is " + file.getAbsolutePath();
+                ans = str + " is " + file.getAbsolutePath();
             }
         }
-        return "";
+        return ans;
     }
 }
