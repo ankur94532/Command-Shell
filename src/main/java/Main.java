@@ -9,6 +9,22 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         while (true) {
             String input = scanner.nextLine();
+            String directory = "";
+            if (input.split(" ")[0].equals("cd")) {
+                String path = input.split(" ")[1];
+                if (exists(path)) {
+                    directory = path;
+                } else {
+                    System.out.println(path + ": No such file or directory");
+                }
+                System.out.print("$ ");
+                continue;
+            }
+            if (input.equals("pwd")) {
+                System.out.println(directory);
+                System.out.print("$ ");
+                continue;
+            }
             if (input.split(" ")[0].equals("pwd")) {
                 System.out.println(Path.of("").toAbsolutePath());
                 System.out.print("$ ");
@@ -37,6 +53,17 @@ public class Main {
             }
             System.out.print("$ ");
         }
+    }
+
+    static boolean exists(String input) {
+        String path = System.getenv("PATH");
+        String[] commands = path.split(":");
+        for (int i = 0; i < commands.length; i++) {
+            if (commands[i].equals(input)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     static boolean check(String input) {
