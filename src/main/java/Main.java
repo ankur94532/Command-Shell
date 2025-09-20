@@ -84,6 +84,7 @@ public class Main {
     }
 
     static void content(String file) {
+        System.out.println("hlo");
         String str = file.substring(1, file.length() - 1);
         Process p;
         try {
