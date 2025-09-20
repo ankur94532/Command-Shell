@@ -10,7 +10,7 @@ public class Main {
         while (true) {
             String input = scanner.nextLine();
             System.out.print("$ ");
-            System.out.println(System.getProperty("user.dir"));
+            System.out.println(Path.of(System.getProperty("user.dir")));
             String directory = "";
             if (input.split(" ")[0].equals("cd")) {
                 String path = input.split(" ")[1];
