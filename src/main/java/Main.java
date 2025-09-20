@@ -27,8 +27,31 @@ public class Main {
                 System.out.print("$ ");
                 continue;
             }
-            if (input.length() >= 4 && input.substring(input.length() - 4).equals("file")) {
-                String[] files = convert(input.substring(0, input.length() - 4));
+            if (input.charAt(0) == '\'') {
+                int ind = 1;
+                for (int i = 1; i < input.length(); i++) {
+                    if (input.charAt(ind) == '\'') {
+                        ind = i;
+                        break;
+                    }
+                }
+                String[] files = convert(input.substring(ind + 2));
+                for (int i = 0; i < files.length; i++) {
+                    content(files[i]);
+                }
+
+                System.out.print("$ ");
+                continue;
+            }
+            if (input.charAt(0) == '"') {
+                int ind = 1;
+                for (int i = 1; i < input.length(); i++) {
+                    if (input.charAt(ind) == '"') {
+                        ind = i;
+                        break;
+                    }
+                }
+                String[] files = convert(input.substring(ind + 2));
                 for (int i = 0; i < files.length; i++) {
                     content(files[i]);
                 }
