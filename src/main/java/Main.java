@@ -35,11 +35,14 @@ public class Main {
                         break;
                     }
                 }
-                String[] files = convert(input.substring(ind + 2));
-                System.out.println(input.substring(ind + 2));
-                for (int i = 0; i < files.length; i++) {
-                    content(files[i]);
-                }
+                content(input.substring(ind + 2));
+                /*
+                 * String[] files = convert(input.substring(ind + 2));
+                 * System.out.println(input.substring(ind + 2));
+                 * for (int i = 0; i < files.length; i++) {
+                 * content(files[i]);
+                 * }
+                 */
 
                 System.out.print("$ ");
                 continue;
