@@ -142,7 +142,6 @@ public class Main {
                     sb.append(input.charAt(ind));
                     ind++;
                 }
-                ind++;
                 dq.offerLast(sb.toString());
             }
         }
