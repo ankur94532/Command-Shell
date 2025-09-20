@@ -148,11 +148,9 @@ public class Main {
                 ind++;
                 dq.offerLast(sb.toString());
             } else if (input.charAt(ind) == '\\') {
-                if (ind + 1 < input.length() && input.charAt(ind + 1) == ' ') {
-                    dq.offerLast(" ");
-                    ind += 2;
-                    continue;
-                }
+                dq.offerLast(new StringBuilder("").append(input.charAt(ind + 1)).toString());
+                ind += 2;
+                continue;
             } else if (input.charAt(ind) == ' ') {
                 if (dq.size() > 0 && dq.peekLast().equals(" ")) {
                     ind++;
