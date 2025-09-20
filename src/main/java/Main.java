@@ -9,7 +9,6 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         while (true) {
             String input = scanner.nextLine();
-            System.out.print("$ ");
             if (input.split(" ")[0].equals("cd")) {
                 String path = input.split(" ")[1];
                 path = exists(path);
