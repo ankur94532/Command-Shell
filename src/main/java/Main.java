@@ -10,11 +10,9 @@ public class Main {
         while (true) {
             String input = scanner.nextLine();
             System.out.print("$ ");
-            System.out.println(Path.of(System.getProperty("user.dir")));
             if (input.split(" ")[0].equals("cd")) {
                 String path = input.split(" ")[1];
                 path = exists(path);
-                System.out.println(path);
                 if (path != null) {
                     System.setProperty("user.dir", path);
                 } else {
