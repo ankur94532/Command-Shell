@@ -11,6 +11,16 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         while (true) {
             String input = scanner.nextLine();
+            if (input.split(" ")[0].equals("echo")) {
+                System.out.println(print(input.substring(5)));
+                System.out.print("$ ");
+                continue;
+            }
+            if (input.split(" ")[0].equals("cat")) {
+                System.out.println(print(input.substring(5)));
+                System.out.print("$ ");
+                continue;
+            }
             if (input.split(" ")[0].equals("cd")) {
                 String path = input.split(" ")[1];
                 if (path.charAt(0) == '.') {
@@ -66,6 +76,44 @@ public class Main {
             }
             System.out.print("$ ");
         }
+    }
+
+    static String print(String input) {
+        Deque<String> dq = new ArrayDeque<>();
+        int ind = 0;
+        while (ind < input.length()) {
+            if (input.charAt(ind) == '\'') {
+                StringBuilder sb = new StringBuilder();
+                ind++;
+                while (ind != input.length() && input.charAt(ind) != '\'') {
+                    sb.append(input.charAt(ind));
+                    ind++;
+                }
+                ind++;
+                dq.offerLast(sb.toString());
+            } else if (input.charAt(ind) == ' ') {
+                if (dq.size() > 0 && dq.peekLast().equals(" ")) {
+                    ind++;
+                    continue;
+                }
+                dq.offerLast(" ");
+                ind++;
+            } else {
+                StringBuilder sb = new StringBuilder();
+                while (input.charAt(ind) != ' ' && input.charAt(ind) != '\'') {
+                    sb.append(input.charAt(ind));
+                    ind++;
+                }
+                ind++;
+                dq.offerLast(sb.toString());
+            }
+        }
+        StringBuilder sb = new StringBuilder();
+        while (dq.size() > 0) {
+            sb.append(dq.peekFirst());
+            dq.pollFirst();
+        }
+        return sb.toString();
     }
 
     static void change(String input) {
