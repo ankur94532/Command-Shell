@@ -70,6 +70,7 @@ public class Main {
         for (int i = 0; i < paths.length; i++) {
             dq.offer(paths[i]);
         }
+        System.out.println("hi" + dq.peekFirst());
         int ind = 0;
         while (ind < input.length()) {
             if (ind + 2 < input.length() && input.substring(ind, ind + 3).equals("../")) {
