@@ -9,6 +9,7 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         while (true) {
             String input = scanner.nextLine();
+            System.out.println(input.split(" ")[0]);
             if (input.split(" ")[0].equals("pwd")) {
                 System.out.println(Path.of("").toAbsolutePath());
                 System.out.print("$ ");
