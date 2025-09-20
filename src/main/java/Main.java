@@ -2,6 +2,7 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Scanner;
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 
 public class Main {
@@ -17,7 +18,11 @@ public class Main {
                 continue;
             }
             if (input.split(" ")[0].equals("cat")) {
-                System.out.println(print(input.substring(5)));
+                String[] files = input.split(" ");
+                for (int i = 1; i < files.length; i++) {
+                    content(files[i]);
+                }
+                System.out.println();
                 System.out.print("$ ");
                 continue;
             }
@@ -75,6 +80,19 @@ public class Main {
                 System.out.println(input + ": not found");
             }
             System.out.print("$ ");
+        }
+    }
+
+    static void content(String file) {
+        String str = file.substring(1, file.length() - 1);
+        Process p;
+        try {
+            p = new ProcessBuilder("cat", str)
+                    .redirectErrorStream(true) // merge stderr into stdout
+                    .start();
+            p.getInputStream().transferTo(System.out);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
