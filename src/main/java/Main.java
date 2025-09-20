@@ -18,6 +18,11 @@ public class Main {
                     System.out.print("$ ");
                     continue;
                 }
+                if (path.charAt(0) == '~') {
+                    System.setProperty("user.dir", System.getenv("HOME"));
+                    System.out.print("$ ");
+                    continue;
+                }
                 path = exists(path);
                 if (path != null) {
                     System.setProperty("user.dir", path);
