@@ -27,6 +27,15 @@ public class Main {
                 System.out.print("$ ");
                 continue;
             }
+            if (input.length() >= 4 && input.substring(input.length() - 4).equals("file")) {
+                String[] files = convert(input.substring(0, input.length() - 4));
+                for (int i = 0; i < files.length; i++) {
+                    content(files[i]);
+                }
+
+                System.out.print("$ ");
+                continue;
+            }
             if (input.split(" ")[0].equals("cd")) {
                 String path = input.split(" ")[1];
                 if (path.charAt(0) == '.') {
