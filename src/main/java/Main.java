@@ -35,7 +35,6 @@ public class Main {
                         break;
                     }
                 }
-                System.out.println(input.substring(ind + 2));
                 String[] files = convert(input.substring(ind + 2));
                 for (int i = 0; i < files.length; i++) {
                     content(files[i]);
