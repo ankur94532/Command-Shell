@@ -15,7 +15,7 @@ public class Main {
                 if (exists(path)) {
                     directory = path;
                 } else {
-                    System.out.println(path + ": No such file or directory");
+                    System.out.println("cd: " + path + ": No such file or directory");
                 }
                 System.out.print("$ ");
                 continue;
