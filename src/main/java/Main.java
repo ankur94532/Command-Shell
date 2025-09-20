@@ -133,6 +133,11 @@ public class Main {
                 StringBuilder sb = new StringBuilder();
                 ind++;
                 while (ind != input.length() && input.charAt(ind) != '"') {
+                    if (input.charAt(ind) == '\\' && ind + 1 < input.length()) {
+                        sb.append(input.charAt(ind + 1));
+                        ind += 2;
+                        continue;
+                    }
                     sb.append(input.charAt(ind));
                     ind++;
                 }
