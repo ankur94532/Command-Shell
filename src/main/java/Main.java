@@ -11,11 +11,11 @@ public class Main {
             String input = scanner.nextLine();
             System.out.print("$ ");
             System.out.println(Path.of(System.getProperty("user.dir")));
-            String directory = "";
             if (input.split(" ")[0].equals("cd")) {
                 String path = input.split(" ")[1];
-                if (exists(path)) {
-                    directory = path;
+                path = exists(path);
+                if (path != null) {
+                    System.setProperty("user.dir", path);
                 } else {
                     System.out.println("cd: " + path + ": No such file or directory");
                 }
@@ -23,7 +23,7 @@ public class Main {
                 continue;
             }
             if (input.equals("pwd")) {
-                System.out.println(directory);
+                System.out.println(System.getProperty("user.dir"));
                 System.out.print("$ ");
                 continue;
             }
@@ -57,16 +57,13 @@ public class Main {
         }
     }
 
-    static boolean exists(String input) {
-        String path = System.getenv("PATH");
-        String[] commands = path.split(":");
-        for (int i = 0; i < commands.length; i++) {
-            System.out.println(commands[i]);
-            if (commands[i].equals(input)) {
-                return true;
-            }
+    static String exists(String input) {
+        Path path = Path.of(input);
+        File file = path.toFile();
+        if (file.exists() && file.isDirectory()) {
+            return file.getAbsolutePath();
         }
-        return false;
+        return null;
     }
 
     static boolean check(String input) {
