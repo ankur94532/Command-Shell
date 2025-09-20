@@ -1,4 +1,5 @@
 import java.util.Scanner;
+import java.io.File;
 
 public class Main {
     public static void main(String[] args) throws Exception {
@@ -13,7 +14,7 @@ public class Main {
                 if (str.equals("echo") || str.equals("exit") || str.equals("type")) {
                     System.out.println(str + " is a shell builtin");
                 } else {
-                    System.out.println(input.substring(5) + " is /bin/" + input.substring(5));
+                    System.out.println(find(str));
                 }
             } else if (str1.equals("echo")) {
                 System.out.println(input.substring(5));
@@ -24,5 +25,17 @@ public class Main {
             }
             System.out.print("$ ");
         }
+    }
+
+    static String find(String str) {
+        String path = System.getenv("PATH");
+        String[] commands = path.split(":");
+        for (int i = 0; i < commands.length; i++) {
+            File file = new File(commands[i], str);
+            if (file.exists()) {
+                return str + " is " + file.getAbsolutePath();
+            }
+        }
+        return "";
     }
 }
