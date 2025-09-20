@@ -15,6 +15,7 @@ public class Main {
                 String path = input.split(" ")[1];
                 if (path.charAt(0) == '.') {
                     change(path);
+                    System.out.print("$ ");
                     continue;
                 }
                 path = exists(path);
