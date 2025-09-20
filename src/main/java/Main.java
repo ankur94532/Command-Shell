@@ -61,6 +61,7 @@ public class Main {
         Path path = Path.of(input);
         File file = path.toFile();
         if (file.exists() && file.isDirectory()) {
+            System.out.println("hi");
             return file.getAbsolutePath();
         }
         return null;
