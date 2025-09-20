@@ -10,7 +10,7 @@ public class Main {
             String input = scanner.nextLine();
             File file = check(input);
             if (file != null) {
-                System.out.println(file.toString());
+                System.out.println(file);
             }
             String str1 = input.substring(0, 4);
             if (str1.equals("type")) {
