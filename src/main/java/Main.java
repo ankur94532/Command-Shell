@@ -60,6 +60,7 @@ public class Main {
         String path = System.getenv("PATH");
         String[] commands = path.split(":");
         for (int i = 0; i < commands.length; i++) {
+            System.out.println(commands[i]);
             if (commands[i].equals(input)) {
                 return true;
             }
