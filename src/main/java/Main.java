@@ -123,8 +123,9 @@ public class Main {
     }
     static void redirect(String input){
         System.out.println(System.getenv("PATH"));
-        /*String[] PATH=System.getenv("PATH").split(":");
-        System.out.println(PATH.length);
+        String[] PATH=System.getenv("PATH").split(":");
+        System.out.println(PATH[0]);
+        /*System.out.println(PATH.length);
         for(String path:PATH){
             System.out.println("Hi "+path);
             File[] directory=new File(path).listFiles();
