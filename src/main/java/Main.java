@@ -122,6 +122,8 @@ public class Main {
         }
     }
     static void redirect(String input){
+        String path=System.getProperty("user.dir");
+        System.out.println(path);
         String[] parts=input.split(" ");
         Path dest=Path.of(parts[parts.length-1]);
         if(parts[0].equals("echo")){
