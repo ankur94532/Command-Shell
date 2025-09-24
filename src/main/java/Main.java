@@ -122,7 +122,15 @@ public class Main {
         }
     }
     static void redirect(String input){
-        System.out.println(System.getenv("PATH"));
+        String[] PATH=System.getenv("PATH").split(":");
+        for(String path:PATH){
+            File[] directory=new File(path).listFiles();
+            if(directory!=null){
+                for(File file:directory){
+                    System.out.println(file.getAbsolutePath());
+                }
+            }
+        }
         Path cwd=Path.of(System.getProperty("user.dir"));
         String[] parts=input.split(" ");
         Path dest=cwd.resolve(parts[parts.length-1]).normalize();
