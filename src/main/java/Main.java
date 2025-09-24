@@ -125,16 +125,16 @@ public class Main {
         System.out.println(System.getenv("PATH"));
         String[] PATH=System.getenv("PATH").split(":");
         System.out.println(PATH[0]);
-        /*System.out.println(PATH.length);
-        for(String path:PATH){
-            System.out.println("Hi "+path);
-            File[] directory=new File(path).listFiles();
+        System.out.println(PATH.length);
+        for(int i=0;i<PATH.length;i++){
+            System.out.println("Hi "+PATH[i]);
+            File[] directory=new File(PATH[i]).listFiles();
             if(directory!=null){
                 for(File file:directory){
                     System.out.println(file.getAbsolutePath());
                 }
             }
-        }*/
+        }
         Path cwd=Path.of(System.getProperty("user.dir"));
         String[] parts=input.split(" ");
         Path dest=cwd.resolve(parts[parts.length-1]).normalize();
