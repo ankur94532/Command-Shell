@@ -122,10 +122,9 @@ public class Main {
         }
     }
     static void redirect(String input){
-        String path=System.getProperty("user.dir");
-        System.out.println(path);
+        Path cwd=Path.of(System.getProperty("user.dir"));
         String[] parts=input.split(" ");
-        Path dest=Path.of(parts[parts.length-1]);
+        Path dest=cwd.resolve(parts[parts.length-1]).normalize();
         if(parts[0].equals("echo")){
             StringBuilder sb=new StringBuilder();
             for(int i=1;i<input.length();i++) {
@@ -156,7 +155,7 @@ public class Main {
                 if (parts[i].length() > 1 && parts[i].charAt(1) == '>') {
                     break;
                 }
-                Path src = Path.of(parts[i]);
+                Path src=cwd.resolve(parts[i]).normalize();
                 try (OutputStream out = Files.newOutputStream(dest, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
                     try (InputStream in = Files.newInputStream(src)) {
                         in.transferTo(out);
