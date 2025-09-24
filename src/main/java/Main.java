@@ -11,19 +11,17 @@ import java.nio.file.Path;
 public class Main {
     public static void main(String[] args) throws Exception {
         // Uncomment this block to pass the first stage
-        //System.out.print("$ ");
+        System.out.print("$ ");
         Scanner scanner = new Scanner(System.in);
         while (true) {
             String input = scanner.nextLine();
             boolean flag=false;
-            System.out.println(input);
             for(int i=0;i<input.length();i++){
                 if(input.charAt(i)=='>'){
                     flag=true;
                     break;
                 }
             }
-            System.out.println(flag);
             if(flag){
                 redirect(input);
                 System.out.print("$ ");
@@ -124,7 +122,6 @@ public class Main {
         }
     }
     static void redirect(String input){
-        System.out.println("Hi");
         String[] parts=input.split(" ");
         Path dest=Path.of(parts[parts.length-1]);
         if(parts[0].equals("echo")){
