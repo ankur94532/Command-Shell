@@ -122,12 +122,11 @@ public class Main {
         }
     }
     static void redirect(String input){
-        System.out.println(System.getenv("PATH"));
-        String[] PATH=System.getenv("PATH").split(":");
-        System.out.println(PATH[0]);
-        System.out.println(PATH.length);
-        for(int i=0;i<PATH.length;i++){
-            System.out.println(i+" "+PATH[i]);
+        File[] directory=new File("/temp").listFiles();
+        if(directory!=null){
+            for(File file:directory){
+                System.out.println(file.getAbsolutePath());
+            }
         }
         Path cwd=Path.of(System.getProperty("user.dir"));
         String[] parts=input.split(" ");
