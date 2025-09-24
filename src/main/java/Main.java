@@ -1,7 +1,9 @@
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Deque;
-import java.util.Scanner;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
+import java.util.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -9,10 +11,24 @@ import java.nio.file.Path;
 public class Main {
     public static void main(String[] args) throws Exception {
         // Uncomment this block to pass the first stage
-        System.out.print("$ ");
+        //System.out.print("$ ");
         Scanner scanner = new Scanner(System.in);
         while (true) {
             String input = scanner.nextLine();
+            boolean flag=false;
+            System.out.println(input);
+            for(int i=0;i<input.length();i++){
+                if(input.charAt(i)=='>'){
+                    flag=true;
+                    break;
+                }
+            }
+            System.out.println(flag);
+            if(flag){
+                redirect(input);
+                System.out.print("$ ");
+                continue;
+            }
             if (input.split(" ")[0].equals("echo")) {
                 System.out.println(print(input.substring(5)));
                 System.out.print("$ ");
@@ -107,7 +123,54 @@ public class Main {
             System.out.print("$ ");
         }
     }
-
+    static void redirect(String input){
+        System.out.println("Hi");
+        String[] parts=input.split(" ");
+        Path dest=Path.of(parts[parts.length-1]);
+        if(parts[0].equals("echo")){
+            StringBuilder sb=new StringBuilder();
+            for(int i=1;i<input.length();i++) {
+                if (input.charAt(i + 2) == '>' || input.charAt(i + 3) == '>') {
+                    break;
+                }
+                if (input.charAt(i) == '\'') {
+                    continue;
+                }
+                sb.append(input.charAt(i));
+            }
+            String str=sb.toString();
+            try {
+                Files.write(dest,str.getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE,StandardOpenOption.TRUNCATE_EXISTING);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        else if(parts[0].equals("ls")||parts[0].equals("cat")){
+            int ind=1;
+            if(parts[1].equals("-1")) {
+                ind = 2;
+            }
+            for(int i=ind;i<parts.length;i++) {
+                if (parts[i].charAt(0) == '>') {
+                    break;
+                }
+                if (parts[i].length() > 1 && parts[i].charAt(1) == '>') {
+                    break;
+                }
+                Path src = Path.of(parts[i]);
+                try (OutputStream out = Files.newOutputStream(dest, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
+                    try (InputStream in = Files.newInputStream(src)) {
+                        in.transferTo(out);
+                    } catch (IOException e) {
+                        System.out.println(parts[0] + ": " + parts[i] + ": No such file or directory");
+                        return;
+                    }
+                } catch (IOException e) {
+                    System.out.println("Cannot do redirection" + e.getMessage());
+                }
+            }
+        }
+    }
     static String[] convert(String input) {
         Deque<String> response = new ArrayDeque<>();
         int ind = 0;
