@@ -1,3 +1,9 @@
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
+import java.util.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -125,53 +131,60 @@ public class Main {
         }
     }
 
-    static void redirect(String input) throws Exception {
-        int gt = input.indexOf('>');
-        if (gt == -1)
-            return;
-        String lhs = input.substring(0, gt).trim();
-        int j = gt - 1;
-        while (j >= 0 && Character.isWhitespace(input.charAt(j)))
-            j--;
-        if (j >= 0 && input.charAt(j) == '1') {
-            lhs = input.substring(0, j).trim();
+    static void redirect(String input) {
+        File[] directory = new File("/temp").listFiles();
+        if (directory != null) {
+            for (File file : directory) {
+                System.out.println(file.getAbsolutePath());
+            }
         }
-        String right = input.substring(gt + 1).trim();
-        if (right.isEmpty())
-            return;
-        String outFile;
-        if ((right.startsWith("\"") && right.endsWith("\"")) ||
-                (right.startsWith("'") && right.endsWith("'"))) {
-            outFile = right.substring(1, right.length() - 1);
-        } else {
-            int k = 0;
-            while (k < right.length() && !Character.isWhitespace(right.charAt(k)))
-                k++;
-            outFile = right.substring(0, k);
+        Path cwd = Path.of(System.getProperty("user.dir"));
+        String[] parts = input.split(" ");
+        Path dest = cwd.resolve(parts[parts.length - 1]).normalize();
+        if (parts[0].equals("echo")) {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 1; i < input.length(); i++) {
+                if (input.charAt(i + 2) == '>' || input.charAt(i + 3) == '>') {
+                    break;
+                }
+                if (input.charAt(i) == '\'') {
+                    continue;
+                }
+                sb.append(input.charAt(i));
+            }
+            String str = sb.toString();
+            try {
+                Files.write(dest, str.getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE,
+                        StandardOpenOption.TRUNCATE_EXISTING);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        } else if (parts[0].equals("ls") || parts[0].equals("cat")) {
+            int ind = 1;
+            if (parts[1].equals("-1")) {
+                ind = 2;
+            }
+            for (int i = ind; i < parts.length; i++) {
+                if (parts[i].charAt(0) == '>') {
+                    break;
+                }
+                if (parts[i].length() > 1 && parts[i].charAt(1) == '>') {
+                    break;
+                }
+                Path src = cwd.resolve(parts[i]).normalize();
+                try (OutputStream out = Files.newOutputStream(dest, StandardOpenOption.CREATE,
+                        StandardOpenOption.TRUNCATE_EXISTING)) {
+                    try (InputStream in = Files.newInputStream(src)) {
+                        in.transferTo(out);
+                    } catch (IOException e) {
+                        System.out.println(parts[0] + ": " + parts[i] + ": No such file or directory");
+                        return;
+                    }
+                } catch (IOException e) {
+                    System.out.println("Cannot do redirection" + e.getMessage());
+                }
+            }
         }
-        if (lhs.startsWith("echo")) {
-            String payload = (lhs.length() >= 5) ? print(lhs.substring(5)) + "\n" : "\n";
-            Files.write(Path.of(outFile), payload.getBytes(StandardCharsets.UTF_8),
-                    StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
-            return;
-        }
-        if (lhs.equals("pwd") || lhs.startsWith("pwd ")) {
-            String payload = System.getProperty("user.dir") + "\n";
-            Files.write(Path.of(outFile), payload.getBytes(StandardCharsets.UTF_8),
-                    StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
-            return;
-        }
-        String[] argv = lhs.isEmpty() ? new String[0] : lhs.split("\\s+");
-        if (argv.length == 0)
-            return;
-
-        ProcessBuilder pb = new ProcessBuilder(argv);
-        pb.redirectOutput(new File(outFile));
-        pb.redirectError(ProcessBuilder.Redirect.INHERIT);
-        pb.redirectInput(ProcessBuilder.Redirect.INHERIT);
-
-        Process p = pb.start();
-        p.waitFor();
     }
 
     static String[] convert(String input) {
