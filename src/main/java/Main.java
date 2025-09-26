@@ -199,12 +199,10 @@ public class Main {
 
                 String[] argv = lhs.split("\\s+"); // e.g. ["ls","-1","/tmp/qux"]
                 String exe = resolveOnPath(argv[0]); // find "ls" in PATH
-                for (String str : argv) {
-                    System.out.println(str);
-                }
                 if (exe == null) {
                     System.out.println(argv[0] + ": not found");
                 } else {
+                    System.out.println("Hey");
                     argv[0] = exe;
                     ProcessBuilder pb = new ProcessBuilder(argv);
                     pb.directory(new java.io.File(System.getProperty("user.dir")));
