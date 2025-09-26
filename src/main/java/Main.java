@@ -23,6 +23,7 @@ public class Main {
                 if (input.charAt(i) == '>') {
                     if (input.charAt(i - 1) == '2') {
                         input = input.substring(0, i) + input.substring(i);
+                        System.out.println(input);
                     }
                     flag = true;
                     break;
