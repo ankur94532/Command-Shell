@@ -293,6 +293,7 @@ public class Main {
     }
 
     static String[] convert(String input) {
+        System.out.println("hi");
         Deque<String> response = new ArrayDeque<>();
         int ind = 0;
         while (ind < input.length()) {
