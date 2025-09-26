@@ -138,37 +138,34 @@ public class Main {
 
         String lhs = input.substring(0, gt).trim();
 
-        // support optional "1>" (stdout)
+        // Support optional "1>" (stdout), without confusing "-1"
         int j = gt - 1;
         while (j >= 0 && Character.isWhitespace(input.charAt(j)))
             j--;
         if (j >= 0 && input.charAt(j) == '1') {
-            lhs = input.substring(0, j).trim();
+            // Only treat as 1> if the preceding char isn't '-' (to avoid "-1")
+            if (!(j - 1 >= 0 && input.charAt(j - 1) == '-')) {
+                lhs = input.substring(0, j).trim();
+            }
         }
 
-        // parse filename (allow quotes; allow no spaces around '>')
         String right = input.substring(gt + 1).trim();
         if (right.isEmpty())
             return;
 
-        String outName;
+        // Allow quoted filenames
         if ((right.startsWith("\"") && right.endsWith("\"")) ||
                 (right.startsWith("'") && right.endsWith("'"))) {
-            outName = right.substring(1, right.length() - 1);
-        } else {
-            int k = 0;
-            while (k < right.length() && !Character.isWhitespace(right.charAt(k)))
-                k++;
-            outName = right.substring(0, k);
+            right = right.substring(1, right.length() - 1);
         }
 
-        Path out = Path.of(outName);
+        Path out = Path.of(right);
         Path parent = out.getParent();
         if (parent != null && !Files.exists(parent)) {
-            Files.createDirectories(parent); // make /tmp/quz for /tmp/quz/bar.md
+            Files.createDirectories(parent); // ensure /tmp/bar exists
         }
 
-        // built-ins that print to stdout
+        // Built-ins that write to stdout
         if (lhs.startsWith("echo")) {
             String payload = (lhs.length() >= 5 ? print(lhs.substring(5)) : "") + "\n";
             Files.write(out, payload.getBytes(StandardCharsets.UTF_8),
@@ -182,19 +179,41 @@ public class Main {
             return;
         }
 
-        // external commands (ls, grep, etc.)
+        // External commands (e.g., ls)
         String[] argv = lhs.isEmpty() ? new String[0] : lhs.split("\\s+");
         if (argv.length == 0)
             return;
 
+        // Resolve executable on PATH to avoid env quirks
+        String exe = resolveOnPath(argv[0]);
+        if (exe == null) {
+            System.out.println(argv[0] + ": not found");
+            return;
+        }
+        argv[0] = exe;
+
         ProcessBuilder pb = new ProcessBuilder(argv);
         pb.directory(new File(System.getProperty("user.dir"))); // honor 'cd'
-        pb.redirectOutput(out.toFile()); // stdout → file (truncate/create)
+        pb.redirectOutput(out.toFile()); // stdout → file
         pb.redirectError(ProcessBuilder.Redirect.INHERIT); // stderr → terminal
-        pb.redirectInput(ProcessBuilder.Redirect.INHERIT); // stdin → terminal
+        pb.redirectInput(ProcessBuilder.Redirect.INHERIT);
 
         Process p = pb.start();
         p.waitFor();
+    }
+
+    static String resolveOnPath(String name) {
+        if (name.contains(File.separator))
+            return new File(name).getPath();
+        String path = System.getenv("PATH");
+        if (path == null)
+            return null;
+        for (String dir : path.split(File.pathSeparator)) {
+            File f = new File(dir, name);
+            if (f.isFile() && f.canExecute())
+                return f.getAbsolutePath();
+        }
+        return null;
     }
 
     static String[] convert(String input) {
