@@ -132,15 +132,13 @@ public class Main {
     }
 
     static void redirect(String input) throws Exception {
-        // find the first '>'
         int gt = input.indexOf('>');
         if (gt == -1)
             return;
 
-        // LHS (command + args), RHS (filename)
         String lhs = input.substring(0, gt).trim();
 
-        // handle optional "1>" (stdout) before '>'
+        // support optional '1>' (stdout)
         int j = gt - 1;
         while (j >= 0 && Character.isWhitespace(input.charAt(j)))
             j--;
@@ -148,49 +146,45 @@ public class Main {
             lhs = input.substring(0, j).trim();
         }
 
-        // parse the filename after '>'
         String right = input.substring(gt + 1).trim();
         if (right.isEmpty())
-            return; // nothing to do
+            return;
 
-        // allow quoted filenames: "my file.txt" or 'my file.txt'
-        String outFile;
+        // allow quoted filenames
         if ((right.startsWith("\"") && right.endsWith("\"")) ||
                 (right.startsWith("'") && right.endsWith("'"))) {
-            outFile = right.substring(1, right.length() - 1);
-        } else {
-            int k = 0;
-            while (k < right.length() && !Character.isWhitespace(right.charAt(k)))
-                k++;
-            outFile = right.substring(0, k);
+            right = right.substring(1, right.length() - 1);
         }
 
-        // Built-in: echo
+        Path out = Path.of(right);
+        Path parent = out.getParent();
+        if (parent != null && !Files.exists(parent)) {
+            Files.createDirectories(parent); // <-- key fix
+        }
+
+        // built-ins you already support
         if (lhs.startsWith("echo")) {
-            String payload = (lhs.length() >= 5) ? print(lhs.substring(5)) + "\n" : "\n";
-            Files.write(Path.of(outFile), payload.getBytes(StandardCharsets.UTF_8),
+            String payload = (lhs.length() >= 5 ? print(lhs.substring(5)) : "") + "\n";
+            Files.write(out, payload.getBytes(StandardCharsets.UTF_8),
                     StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
             return;
         }
-
-        // Built-in: pwd (optional but nice to support)
         if (lhs.equals("pwd") || lhs.startsWith("pwd ")) {
             String payload = System.getProperty("user.dir") + "\n";
-            Files.write(Path.of(outFile), payload.getBytes(StandardCharsets.UTF_8),
+            Files.write(out, payload.getBytes(StandardCharsets.UTF_8),
                     StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
             return;
         }
 
-        // Everything else: run as external, redirect ONLY stdout to file
+        // external command: redirect only stdout
         String[] argv = lhs.isEmpty() ? new String[0] : lhs.split("\\s+");
         if (argv.length == 0)
             return;
 
         ProcessBuilder pb = new ProcessBuilder(argv);
-        pb.redirectOutput(new File(outFile)); // stdout → file (truncate/create)
+        pb.redirectOutput(out.toFile()); // stdout → file
         pb.redirectError(ProcessBuilder.Redirect.INHERIT); // stderr → terminal
         pb.redirectInput(ProcessBuilder.Redirect.INHERIT); // stdin → terminal
-
         Process p = pb.start();
         p.waitFor();
     }
