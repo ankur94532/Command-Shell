@@ -36,11 +36,9 @@ public class Main {
                 continue;
             }
             if (input.split(" ")[0].equals("cat")) {
-                String[] files = convert(input);
-                System.out.println(files.length); // extracts only quoted filenames
+                String[] files = convert(input); // extracts only quoted filenames
                 if (files.length > 0) {
                     for (int i = 0; i < files.length; i++) {
-                        System.out.println(files[i]);
                         content(files[i]); // your existing helper
                     }
                 }
