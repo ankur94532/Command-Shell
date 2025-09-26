@@ -313,6 +313,15 @@ public class Main {
                     ind++;
                 }
                 response.offerLast(sb.toString());
+            } else if (input.charAt(ind) == '\"') {
+                ind++;
+                StringBuilder sb = new StringBuilder();
+                while (ind < input.length()
+                        && (input.charAt(ind) != '\"')) {
+                    sb.append(input.charAt(ind));
+                    ind++;
+                }
+                response.offerLast(sb.toString());
             }
             ind++;
         }
