@@ -155,6 +155,8 @@ public class Main {
                 } else if (input.charAt(i) == '>') {
                     dest = input.substring(i + 2);
                     break;
+                } else {
+                    i++;
                 }
             }
             dest = dest.trim();
