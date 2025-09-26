@@ -199,7 +199,7 @@ public class Main {
                 } else {
                     argv[0] = exe;
                     for (String str : argv) {
-                        System.out.println(str);
+                        System.out.print(str + " ");
                     }
                     ProcessBuilder pb = new ProcessBuilder(argv);
                     pb.directory(new java.io.File(System.getProperty("user.dir")));
