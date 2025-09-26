@@ -299,7 +299,15 @@ public class Main {
             if (input.charAt(ind) == '/') {
                 StringBuilder sb = new StringBuilder();
                 while (ind < input.length()
-                        && (input.charAt(ind) != ' ' || input.charAt(ind) != '\'' || input.charAt(ind) != '\"')) {
+                        && (input.charAt(ind) != ' ')) {
+                    sb.append(input.charAt(ind));
+                    ind++;
+                }
+                response.offerLast(sb.toString());
+            } else if (input.charAt(ind) == '\'') {
+                StringBuilder sb = new StringBuilder();
+                while (ind < input.length()
+                        && (input.charAt(ind) != '\'')) {
                     sb.append(input.charAt(ind));
                     ind++;
                 }
