@@ -211,8 +211,8 @@ public class Main {
                     pb.directory(new File(System.getProperty("user.dir")));
 
                     if (error) {
-                        System.out.println("hi");
-                        pb.redirectError(ProcessBuilder.Redirect.to(out.toFile())); // STDERR → file
+                        pb.redirectError(ProcessBuilder.Redirect.INHERIT);
+                        // pb.redirectError(ProcessBuilder.Redirect.to(out.toFile())); // STDERR → file
                         pb.redirectOutput(ProcessBuilder.Redirect.INHERIT); // STDOUT → terminal
                     } else {
                         pb.redirectOutput(out.toFile()); // STDOUT → file
