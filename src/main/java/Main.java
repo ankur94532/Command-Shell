@@ -305,6 +305,7 @@ public class Main {
                 response.offerLast(sb.toString());
             }
         }
+        System.out.println(response.size());
         return response.toArray(new String[response.size()]);
     }
 
