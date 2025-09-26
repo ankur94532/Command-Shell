@@ -228,7 +228,7 @@ public class Main {
                     java.nio.file.Files.createDirectories(parent);
                 }
 
-                String[] argv = lhs.split("\\s+"); // e.g. ["ls","-1","/tmp/qux"]
+                String[] argv = lhs.split("\\s+"); // e.g. ["ls","-1","/tmp/qux"
                 String exe = resolveOnPath(argv[0]); // find "ls" in PATH
                 if (exe == null) {
                     System.out.println(argv[0] + ": not found");
