@@ -303,6 +303,7 @@ public class Main {
                     sb.append(input.charAt(ind));
                     ind++;
                 }
+                System.out.println(sb.toString());
                 response.offerLast(sb.toString());
             }
         }
