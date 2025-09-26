@@ -190,8 +190,7 @@ public class Main {
                 Files.write(outPath,
                         outBuf.toString().getBytes(StandardCharsets.UTF_8),
                         StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-            }
-            if (!error) {
+            } else if (!error) {
                 outBuf.append('\n');
                 Files.write(outPath,
                         outBuf.toString().getBytes(StandardCharsets.UTF_8),
