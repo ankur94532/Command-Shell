@@ -211,11 +211,10 @@ public class Main {
                     pb.directory(new File(System.getProperty("user.dir")));
 
                     if (error) {
-                        // simulate `2> dest`
+                        System.out.println("hi");
                         pb.redirectError(ProcessBuilder.Redirect.to(out.toFile())); // STDERR → file
                         pb.redirectOutput(ProcessBuilder.Redirect.INHERIT); // STDOUT → terminal
                     } else {
-                        // simulate `> dest` or `1> dest`
                         pb.redirectOutput(out.toFile()); // STDOUT → file
                         pb.redirectError(ProcessBuilder.Redirect.INHERIT); // STDERR → terminal
                     }
