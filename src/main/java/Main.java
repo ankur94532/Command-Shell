@@ -31,6 +31,7 @@ public class Main {
                         append = true;
                         input = input.substring(0, i) + input.substring(i + 1);
                     }
+                    System.out.println(input);
                     flag = true;
                     break;
                 }
