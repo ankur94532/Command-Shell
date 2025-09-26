@@ -313,9 +313,8 @@ public class Main {
                     ind++;
                 }
                 response.offerLast(sb.toString());
-            } else {
-                ind++;
             }
+            ind++;
         }
         return response.toArray(new String[response.size()]);
     }
@@ -328,7 +327,6 @@ public class Main {
                     .start();
             p.getInputStream().transferTo(System.out);
         } catch (IOException e) {
-            System.out.println(file);
             e.printStackTrace();
         }
     }
