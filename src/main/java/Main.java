@@ -159,6 +159,19 @@ public class Main {
                         j++;
                     }
                     dq.offerLast(sb.toString());
+                } else if (input.charAt(i) == '\"') {
+                    int j = i;
+                    StringBuilder sb = new StringBuilder();
+                    j++;
+                    while (j < input.length()) {
+                        if (input.charAt(j) == '\"') {
+                            i = j + 1;
+                            break;
+                        }
+                        sb.append(input.charAt(j));
+                        j++;
+                    }
+                    dq.offerLast(sb.toString());
                 } else if (i + 1 < input.length() && input.charAt(i) == '1' && input.charAt(i + 1) == '>') {
                     dest = input.substring(i + 3);
                     break;
