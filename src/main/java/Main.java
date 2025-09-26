@@ -10,9 +10,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.util.ArrayDeque;
-import java.util.Deque;
-import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) throws Exception {
@@ -131,85 +128,161 @@ public class Main {
         }
     }
 
-    static void redirect(String input) throws Exception {
-        int gt = input.indexOf('>');
-        if (gt == -1)
-            return;
-
-        String lhs = input.substring(0, gt).trim();
-
-        // Support optional "1>" (stdout), without confusing "-1"
-        int j = gt - 1;
-        while (j >= 0 && Character.isWhitespace(input.charAt(j)))
-            j--;
-        if (j >= 0 && input.charAt(j) == '1') {
-            // Only treat as 1> if the preceding char isn't '-' (to avoid "-1")
-            if (!(j - 1 >= 0 && input.charAt(j - 1) == '-')) {
-                lhs = input.substring(0, j).trim();
+    static void redirect(String input) throws IOException, InterruptedException {
+        String[] inputs = input.split(" ");
+        if (inputs[0].equals("echo")) {
+            Deque<String> dq = new ArrayDeque<>();
+            String dest = "";
+            for (int i = 0; i < input.length();) {
+                if (input.charAt(i) == '\'') {
+                    int j = i;
+                    StringBuilder sb = new StringBuilder();
+                    j++;
+                    while (j < input.length()) {
+                        if (input.charAt(j) == '\'') {
+                            i = j + 1;
+                            break;
+                        }
+                        sb.append(input.charAt(j));
+                        j++;
+                    }
+                    dq.offerLast(sb.toString());
+                } else if (i + 1 < input.length() && input.charAt(i) == '1' && input.charAt(i + 1) == '>') {
+                    dest = input.substring(i + 3);
+                    break;
+                } else if (input.charAt(i) == '>') {
+                    dest = input.substring(i + 2);
+                    break;
+                }
             }
-        }
-
-        String right = input.substring(gt + 1).trim();
-        if (right.isEmpty())
-            return;
-
-        // Allow quoted filenames
-        if ((right.startsWith("\"") && right.endsWith("\"")) ||
-                (right.startsWith("'") && right.endsWith("'"))) {
-            right = right.substring(1, right.length() - 1);
-        }
-
-        Path out = Path.of(right);
-        Path parent = out.getParent();
-        if (parent != null && !Files.exists(parent)) {
-            Files.createDirectories(parent); // ensure /tmp/bar exists
-        }
-
-        // Built-ins that write to stdout
-        if (lhs.startsWith("echo")) {
-            String payload = (lhs.length() >= 5 ? print(lhs.substring(5)) : "") + "\n";
-            Files.write(out, payload.getBytes(StandardCharsets.UTF_8),
+            dest = dest.trim();
+            if ((dest.startsWith("\"") && dest.endsWith("\"")) ||
+                    (dest.startsWith("'") && dest.endsWith("'"))) {
+                dest = dest.substring(1, dest.length() - 1);
+            }
+            StringBuilder outBuf = new StringBuilder();
+            for (var it = dq.iterator(); it.hasNext();) {
+                outBuf.append(it.next());
+                if (it.hasNext())
+                    outBuf.append(' ');
+            }
+            outBuf.append('\n');
+            Path outPath = Path.of(dest);
+            Path parent = outPath.getParent();
+            if (parent != null && !Files.exists(parent)) {
+                Files.createDirectories(parent);
+            }
+            Files.write(outPath,
+                    outBuf.toString().getBytes(StandardCharsets.UTF_8),
                     StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
-            return;
+        } else if (inputs[0].equals("ls")) {
+            int gt = input.lastIndexOf('>');
+            if (gt != -1) {
+                String lhs = input.substring(0, gt).trim();
+
+                String right = input.substring(gt + 1).trim();
+                String dest = unquote(firstToken(right)); // handle quotes and extra spaces
+
+                java.nio.file.Path out = java.nio.file.Path.of(dest);
+                java.nio.file.Path parent = out.getParent();
+                if (parent != null && !java.nio.file.Files.exists(parent)) {
+                    java.nio.file.Files.createDirectories(parent);
+                }
+
+                String[] argv = lhs.split("\\s+"); // e.g. ["ls","-1","/tmp/qux"]
+                String exe = resolveOnPath(argv[0]); // find "ls" in PATH
+                if (exe == null) {
+                    System.out.println(argv[0] + ": not found");
+                } else {
+                    argv[0] = exe;
+                    ProcessBuilder pb = new ProcessBuilder(argv);
+                    pb.directory(new java.io.File(System.getProperty("user.dir")));
+                    pb.redirectOutput(out.toFile()); // STDOUT → file (truncate/create)
+                    pb.redirectError(ProcessBuilder.Redirect.INHERIT); // STDERR → terminal
+                    pb.redirectInput(ProcessBuilder.Redirect.INHERIT);
+                    Process p = pb.start();
+                    p.waitFor();
+                }
+            } else {
+                // no redirection: just run ls normally
+                ProcessBuilder pb = new ProcessBuilder(input.trim().split("\\s+"));
+                pb.directory(new java.io.File(System.getProperty("user.dir")));
+                pb.inheritIO();
+                Process p = pb.start();
+                p.waitFor();
+            }
+        } else if (inputs[0].equals("cat")) {
+            int gt = input.lastIndexOf('>');
+            if (gt == -1)
+                return;
+
+            // Handle optional "1>" (avoid confusing the option "-1")
+            int j = gt - 1;
+            while (j >= 0 && Character.isWhitespace(input.charAt(j)))
+                j--;
+            boolean oneRedir = (j >= 0 && input.charAt(j) == '1' && !(j - 1 >= 0 && input.charAt(j - 1) == '-'));
+
+            String lhs = input.substring(0, oneRedir ? j : gt).trim(); // "cat ...sources..."
+            String rhs = input.substring(gt + 1).trim(); // dest (maybe quoted)
+
+            String dest = unquote(firstToken(rhs));
+            Path out = Path.of(dest);
+            Path parent = out.getParent();
+            if (parent != null && !Files.exists(parent)) {
+                Files.createDirectories(parent); // ensure parent dir exists
+            }
+
+            // Extract sources after "cat"
+            String srcPart = lhs.startsWith("cat") ? lhs.substring(3).trim() : lhs;
+            List<String> sources = tokenizeArgs(srcPart); // handles quotes/escapes
+
+            // If no sources, cat would read stdin; here just create/truncate empty file
+            if (sources.isEmpty()) {
+                Files.write(out, new byte[0], StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+                return;
+            }
+
+            // Exec external `cat` with stdout → file, stderr → terminal
+            List<String> argv = new ArrayList<>();
+            String catExe = resolveOnPath("cat");
+            argv.add(catExe != null ? catExe : "cat");
+            argv.addAll(sources);
+
+            ProcessBuilder pb = new ProcessBuilder(argv);
+            pb.directory(new File(System.getProperty("user.dir"))); // honor your `cd`
+            pb.redirectOutput(out.toFile()); // STDOUT → file
+            pb.redirectError(ProcessBuilder.Redirect.INHERIT); // STDERR → terminal
+            pb.redirectInput(ProcessBuilder.Redirect.INHERIT);
+
+            Process p = pb.start();
+            p.waitFor();
         }
-        if (lhs.equals("pwd") || lhs.startsWith("pwd ")) {
-            String payload = System.getProperty("user.dir") + "\n";
-            Files.write(out, payload.getBytes(StandardCharsets.UTF_8),
-                    StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
-            return;
+
+    }
+
+    static String firstToken(String s) {
+        // returns first whitespace-separated token (quotes handled by unquote)
+        int i = 0;
+        while (i < s.length() && !Character.isWhitespace(s.charAt(i)))
+            i++;
+        return s.substring(0, i);
+    }
+
+    static String unquote(String s) {
+        if ((s.startsWith("\"") && s.endsWith("\"")) || (s.startsWith("'") && s.endsWith("'"))) {
+            return s.substring(1, s.length() - 1);
         }
-
-        // External commands (e.g., ls)
-        String[] argv = lhs.isEmpty() ? new String[0] : lhs.split("\\s+");
-        if (argv.length == 0)
-            return;
-
-        // Resolve executable on PATH to avoid env quirks
-        String exe = resolveOnPath(argv[0]);
-        if (exe == null) {
-            System.out.println(argv[0] + ": not found");
-            return;
-        }
-        argv[0] = exe;
-
-        ProcessBuilder pb = new ProcessBuilder(argv);
-        pb.directory(new File(System.getProperty("user.dir"))); // honor 'cd'
-        pb.redirectOutput(out.toFile()); // stdout → file
-        pb.redirectError(ProcessBuilder.Redirect.INHERIT); // stderr → terminal
-        pb.redirectInput(ProcessBuilder.Redirect.INHERIT);
-
-        Process p = pb.start();
-        p.waitFor();
+        return s;
     }
 
     static String resolveOnPath(String name) {
-        if (name.contains(File.separator))
-            return new File(name).getPath();
+        if (name.contains(java.io.File.separator))
+            return new java.io.File(name).getPath();
         String path = System.getenv("PATH");
         if (path == null)
             return null;
-        for (String dir : path.split(File.pathSeparator)) {
-            File f = new File(dir, name);
+        for (String dir : path.split(java.io.File.pathSeparator)) {
+            java.io.File f = new java.io.File(dir, name);
             if (f.isFile() && f.canExecute())
                 return f.getAbsolutePath();
         }
@@ -314,6 +387,43 @@ public class Main {
             dq.pollFirst();
         }
         return sb.toString();
+    }
+
+    static List<String> tokenizeArgs(String s) {
+        ArrayList<String> out = new ArrayList<>();
+        StringBuilder cur = new StringBuilder();
+        boolean inS = false, inD = false, esc = false;
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            if (esc) {
+                cur.append(c);
+                esc = false;
+                continue;
+            }
+            if (c == '\\') {
+                esc = true;
+                continue;
+            }
+            if (c == '\'' && !inD) {
+                inS = !inS;
+                continue;
+            }
+            if (c == '"' && !inS) {
+                inD = !inD;
+                continue;
+            }
+            if (Character.isWhitespace(c) && !inS && !inD) {
+                if (cur.length() > 0) {
+                    out.add(cur.toString());
+                    cur.setLength(0);
+                }
+                continue;
+            }
+            cur.append(c);
+        }
+        if (cur.length() > 0)
+            out.add(cur.toString());
+        return out;
     }
 
     static void change(String input) {
