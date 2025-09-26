@@ -36,14 +36,27 @@ public class Main {
                 continue;
             }
             if (input.split(" ")[0].equals("cat")) {
-                String[] files = convert(input);
-                for (int i = 0; i < files.length; i++) {
-                    content(files[i]);
+                String[] files = convert(input); // extracts only quoted filenames
+                if (files.length > 0) {
+                    for (int i = 0; i < files.length; i++) {
+                        content(files[i]); // your existing helper
+                    }
+                } else {
+                    // Fallback: run external cat with unquoted args so "cat /tmp/x" works
+                    java.util.List<String> args1 = tokenizeArgs(input.trim()); // already in your class
+                    String exe = resolveOnPath(args1.get(0)); // robust PATH lookup
+                    if (exe != null)
+                        args1.set(0, exe);
+                    ProcessBuilder pb = new ProcessBuilder(args);
+                    pb.directory(new java.io.File(System.getProperty("user.dir")));
+                    pb.inheritIO(); // stdout/stderr to terminal
+                    Process p = pb.start();
+                    p.waitFor();
                 }
-
                 System.out.print("$ ");
                 continue;
             }
+
             if (input.charAt(0) == '\'') {
                 int ind = 1;
                 for (int i = 1; i < input.length(); i++) {
@@ -247,9 +260,6 @@ public class Main {
             String catExe = resolveOnPath("cat");
             argv.add(catExe != null ? catExe : "cat");
             argv.addAll(sources);
-            for (String str : argv) {
-                System.out.println(str);
-            }
             ProcessBuilder pb = new ProcessBuilder(argv);
             pb.directory(new File(System.getProperty("user.dir"))); // honor your `cd`
             pb.redirectOutput(out.toFile()); // STDOUT → file
