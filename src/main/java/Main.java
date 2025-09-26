@@ -304,6 +304,8 @@ public class Main {
                 }
                 System.out.println(sb.toString());
                 response.offerLast(sb.toString());
+            } else {
+                ind++;
             }
         }
         System.out.println(response.size());
