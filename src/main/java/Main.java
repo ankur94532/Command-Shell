@@ -19,9 +19,11 @@ public class Main {
         while (true) {
             String input = scanner.nextLine();
             boolean flag = false;
+            boolean error = false;
             for (int i = 0; i < input.length(); i++) {
                 if (input.charAt(i) == '>') {
                     if (input.charAt(i - 1) == '2') {
+                        error = true;
                         input = input.substring(0, i - 1) + input.substring(i);
                         System.out.println(input);
                     }
@@ -30,7 +32,7 @@ public class Main {
                 }
             }
             if (flag) {
-                redirect(input);
+                redirect(input, error);
                 System.out.print("$ ");
                 continue;
             }
@@ -134,7 +136,7 @@ public class Main {
         }
     }
 
-    static void redirect(String input) throws IOException, InterruptedException {
+    static void redirect(String input, boolean error) throws IOException, InterruptedException {
         String[] inputs = input.split(" ");
         if (inputs[0].equals("echo")) {
             Deque<String> dq = new ArrayDeque<>();
@@ -180,9 +182,11 @@ public class Main {
             if (parent != null && !Files.exists(parent)) {
                 Files.createDirectories(parent);
             }
-            Files.write(outPath,
-                    outBuf.toString().getBytes(StandardCharsets.UTF_8),
-                    StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+            if (!error) {
+                Files.write(outPath,
+                        outBuf.toString().getBytes(StandardCharsets.UTF_8),
+                        StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+            }
         } else if (inputs[0].equals("ls")) {
             int gt = input.lastIndexOf('>');
             if (gt != -1) {
@@ -204,10 +208,20 @@ public class Main {
                 } else {
                     argv[0] = exe;
                     ProcessBuilder pb = new ProcessBuilder(argv);
-                    pb.directory(new java.io.File(System.getProperty("user.dir")));
-                    pb.redirectOutput(out.toFile()); // STDOUT → file (truncate/create)
-                    pb.redirectError(ProcessBuilder.Redirect.to(out.toFile())); // STDERR → terminal
+                    pb.directory(new File(System.getProperty("user.dir")));
+
+                    if (error) {
+                        // simulate `2> dest`
+                        pb.redirectError(ProcessBuilder.Redirect.to(out.toFile())); // STDERR → file
+                        pb.redirectOutput(ProcessBuilder.Redirect.INHERIT); // STDOUT → terminal
+                    } else {
+                        // simulate `> dest` or `1> dest`
+                        pb.redirectOutput(out.toFile()); // STDOUT → file
+                        pb.redirectError(ProcessBuilder.Redirect.INHERIT); // STDERR → terminal
+                    }
+
                     pb.redirectInput(ProcessBuilder.Redirect.INHERIT);
+
                     Process p = pb.start();
                     p.waitFor();
                 }
