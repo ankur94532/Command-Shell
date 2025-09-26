@@ -175,13 +175,13 @@ public class Main {
                 if (it.hasNext())
                     outBuf.append(' ');
             }
-            outBuf.append('\n');
             Path outPath = Path.of(dest);
             Path parent = outPath.getParent();
             if (parent != null && !Files.exists(parent)) {
                 Files.createDirectories(parent);
             }
             if (!error) {
+                outBuf.append('\n');
                 Files.write(outPath,
                         outBuf.toString().getBytes(StandardCharsets.UTF_8),
                         StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
