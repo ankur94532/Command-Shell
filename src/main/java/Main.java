@@ -185,6 +185,8 @@ public class Main {
                 Files.write(outPath,
                         outBuf.toString().getBytes(StandardCharsets.UTF_8),
                         StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+            } else {
+                System.out.println(outBuf.toString());
             }
         } else if (inputs[0].equals("ls")) {
             int gt = input.lastIndexOf('>');
