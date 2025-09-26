@@ -200,7 +200,7 @@ public class Main {
                 String[] argv = lhs.split("\\s+"); // e.g. ["ls","-1","/tmp/qux"]
                 String exe = resolveOnPath(argv[0]); // find "ls" in PATH
                 if (exe == null) {
-                    System.out.println(argv[0] + ": not found");
+                    System.out.println(argv[0] + "hey: not found");
                 } else {
                     argv[0] = exe;
                     ProcessBuilder pb = new ProcessBuilder(argv);
