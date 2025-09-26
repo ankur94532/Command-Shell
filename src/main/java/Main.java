@@ -229,22 +229,6 @@ public class Main {
                             StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
                 }
             }
-            if (append) {
-                outBuf.append('\n');
-                Files.write(outPath,
-                        outBuf.toString().getBytes(StandardCharsets.UTF_8),
-                        StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-            } else if (!error) {
-                outBuf.append('\n');
-                Files.write(outPath,
-                        outBuf.toString().getBytes(StandardCharsets.UTF_8),
-                        StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
-            } else {
-                System.out.println(outBuf.toString());
-                Files.write(outPath,
-                        "".getBytes(StandardCharsets.UTF_8),
-                        StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
-            }
         } else if (inputs[0].equals("ls")) {
             int gt = input.lastIndexOf('>');
             if (gt != -1) {
