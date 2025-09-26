@@ -298,7 +298,8 @@ public class Main {
         while (ind < input.length()) {
             if (input.charAt(ind) == '/') {
                 StringBuilder sb = new StringBuilder();
-                while (input.charAt(ind) != ' ' || input.charAt(ind) != '\'' || input.charAt(ind) != '\"') {
+                while (ind < input.length()
+                        && (input.charAt(ind) != ' ' || input.charAt(ind) != '\'' || input.charAt(ind) != '\"')) {
                     sb.append(input.charAt(ind));
                     ind++;
                 }
