@@ -41,17 +41,6 @@ public class Main {
                     for (int i = 0; i < files.length; i++) {
                         content(files[i]); // your existing helper
                     }
-                } else {
-                    // Fallback: run external cat with unquoted args so "cat /tmp/x" works
-                    java.util.List<String> args1 = tokenizeArgs(input.trim()); // already in your class
-                    String exe = resolveOnPath(args1.get(0)); // robust PATH lookup
-                    if (exe != null)
-                        args1.set(0, exe);
-                    ProcessBuilder pb = new ProcessBuilder(args);
-                    pb.directory(new java.io.File(System.getProperty("user.dir")));
-                    pb.inheritIO(); // stdout/stderr to terminal
-                    Process p = pb.start();
-                    p.waitFor();
                 }
                 System.out.print("$ ");
                 continue;
@@ -305,26 +294,13 @@ public class Main {
         Deque<String> response = new ArrayDeque<>();
         int ind = 0;
         while (ind < input.length()) {
-            if (input.charAt(ind) == '\'') {
-                ind++;
+            if (input.charAt(ind) == '/') {
                 StringBuilder sb = new StringBuilder();
-                while (input.charAt(ind) != '\'') {
+                while (input.charAt(ind) != ' ' || input.charAt(ind) != '\'' || input.charAt(ind) != '\"') {
                     sb.append(input.charAt(ind));
                     ind++;
                 }
-                ind++;
                 response.offerLast(sb.toString());
-            } else if (input.charAt(ind) == '"') {
-                ind++;
-                StringBuilder sb = new StringBuilder();
-                while (input.charAt(ind) != '"') {
-                    sb.append(input.charAt(ind));
-                    ind++;
-                }
-                ind++;
-                response.offerLast(sb.toString());
-            } else {
-                ind++;
             }
         }
         return response.toArray(new String[response.size()]);
