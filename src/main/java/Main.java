@@ -204,6 +204,31 @@ public class Main {
             if (parent != null && !Files.exists(parent)) {
                 Files.createDirectories(parent);
             }
+            if (error) {
+                System.out.println(outBuf.toString());
+                if (append) {
+                    Files.write(outPath,
+                            "".getBytes(StandardCharsets.UTF_8),
+                            StandardOpenOption.CREATE, StandardOpenOption.APPEND);// STDERR >> file
+                } else {
+                    Files.write(outPath,
+                            "".getBytes(StandardCharsets.UTF_8),
+                            StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);// STDERR > file
+                }
+            } else {
+                // > or >> dest
+                if (append) {
+                    outBuf.append('\n');
+                    Files.write(outPath,
+                            outBuf.toString().getBytes(StandardCharsets.UTF_8),
+                            StandardOpenOption.CREATE, StandardOpenOption.APPEND); // STDOUT >> file
+                } else {
+                    outBuf.append('\n');
+                    Files.write(outPath,
+                            outBuf.toString().getBytes(StandardCharsets.UTF_8),
+                            StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+                }
+            }
             if (append) {
                 outBuf.append('\n');
                 Files.write(outPath,
