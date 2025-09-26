@@ -134,10 +134,9 @@ public class Main {
                         j++;
                     }
                     str = input.substring(i, j);
-                    break;
                 }
             }
-            
+
         }
     }
 
