@@ -25,7 +25,6 @@ public class Main {
                     if (input.charAt(i - 1) == '2') {
                         error = true;
                         input = input.substring(0, i - 1) + input.substring(i);
-                        System.out.println(input);
                     }
                     flag = true;
                     break;
@@ -212,8 +211,7 @@ public class Main {
 
                     if (error) {
                         pb.redirectError(ProcessBuilder.Redirect.to(out.toFile())); // STDERR → file
-                        // pb.redirectOutput(ProcessBuilder.Redirect.INHERIT); // STDOUT → terminal
-                        pb.redirectOutput(out.toFile());
+                        pb.redirectOutput(ProcessBuilder.Redirect.INHERIT); // STDOUT → terminal
                     } else {
                         pb.redirectOutput(out.toFile()); // STDOUT → file
                         pb.redirectError(ProcessBuilder.Redirect.INHERIT); // STDERR → terminal
