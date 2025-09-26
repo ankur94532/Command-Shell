@@ -138,7 +138,7 @@ public class Main {
 
         String lhs = input.substring(0, gt).trim();
 
-        // support optional '1>' (stdout)
+        // support optional "1>" (stdout)
         int j = gt - 1;
         while (j >= 0 && Character.isWhitespace(input.charAt(j)))
             j--;
@@ -146,23 +146,29 @@ public class Main {
             lhs = input.substring(0, j).trim();
         }
 
+        // parse filename (allow quotes; allow no spaces around '>')
         String right = input.substring(gt + 1).trim();
         if (right.isEmpty())
             return;
 
-        // allow quoted filenames
+        String outName;
         if ((right.startsWith("\"") && right.endsWith("\"")) ||
                 (right.startsWith("'") && right.endsWith("'"))) {
-            right = right.substring(1, right.length() - 1);
+            outName = right.substring(1, right.length() - 1);
+        } else {
+            int k = 0;
+            while (k < right.length() && !Character.isWhitespace(right.charAt(k)))
+                k++;
+            outName = right.substring(0, k);
         }
 
-        Path out = Path.of(right);
+        Path out = Path.of(outName);
         Path parent = out.getParent();
         if (parent != null && !Files.exists(parent)) {
-            Files.createDirectories(parent); // <-- key fix
+            Files.createDirectories(parent); // make /tmp/quz for /tmp/quz/bar.md
         }
 
-        // built-ins you already support
+        // built-ins that print to stdout
         if (lhs.startsWith("echo")) {
             String payload = (lhs.length() >= 5 ? print(lhs.substring(5)) : "") + "\n";
             Files.write(out, payload.getBytes(StandardCharsets.UTF_8),
@@ -176,15 +182,17 @@ public class Main {
             return;
         }
 
-        // external command: redirect only stdout
+        // external commands (ls, grep, etc.)
         String[] argv = lhs.isEmpty() ? new String[0] : lhs.split("\\s+");
         if (argv.length == 0)
             return;
 
         ProcessBuilder pb = new ProcessBuilder(argv);
-        pb.redirectOutput(out.toFile()); // stdout → file
+        pb.directory(new File(System.getProperty("user.dir"))); // honor 'cd'
+        pb.redirectOutput(out.toFile()); // stdout → file (truncate/create)
         pb.redirectError(ProcessBuilder.Redirect.INHERIT); // stderr → terminal
         pb.redirectInput(ProcessBuilder.Redirect.INHERIT); // stdin → terminal
+
         Process p = pb.start();
         p.waitFor();
     }
