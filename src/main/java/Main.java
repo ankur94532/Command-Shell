@@ -39,7 +39,6 @@ public class Main {
                 String[] files = convert(input); // extracts only quoted filenames
                 if (files.length > 0) {
                     for (int i = 0; i < files.length; i++) {
-                        System.out.println(files[i]);
                         content(files[i]); // your existing helper
                     }
                 }
@@ -329,6 +328,7 @@ public class Main {
                     .start();
             p.getInputStream().transferTo(System.out);
         } catch (IOException e) {
+            System.out.println(file);
             e.printStackTrace();
         }
     }
