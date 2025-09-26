@@ -1,6 +1,9 @@
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Scanner;
@@ -122,22 +125,53 @@ public class Main {
         }
     }
 
-    public void redirect(String input) {
-        String[] parts = input.split(" ");
-        if (parts[0].equals("echo")) {
-            String str;
-            for (int i = 0; i < input.length(); i++) {
-                if (input.charAt(i) == '\'') {
-                    int j = i + 1;
-                    while (j < input.length() &&
-                            input.charAt(j) != '\'') {
-                        j++;
-                    }
-                    str = input.substring(i, j);
-                }
-            }
-
+    static void redirect(String input) throws Exception {
+        int gt = input.indexOf('>');
+        if (gt == -1)
+            return;
+        String lhs = input.substring(0, gt).trim();
+        int j = gt - 1;
+        while (j >= 0 && Character.isWhitespace(input.charAt(j)))
+            j--;
+        if (j >= 0 && input.charAt(j) == '1') {
+            lhs = input.substring(0, j).trim();
         }
+        String right = input.substring(gt + 1).trim();
+        if (right.isEmpty())
+            return;
+        String outFile;
+        if ((right.startsWith("\"") && right.endsWith("\"")) ||
+                (right.startsWith("'") && right.endsWith("'"))) {
+            outFile = right.substring(1, right.length() - 1);
+        } else {
+            int k = 0;
+            while (k < right.length() && !Character.isWhitespace(right.charAt(k)))
+                k++;
+            outFile = right.substring(0, k);
+        }
+        if (lhs.startsWith("echo")) {
+            String payload = (lhs.length() >= 5) ? print(lhs.substring(5)) + "\n" : "\n";
+            Files.write(Path.of(outFile), payload.getBytes(StandardCharsets.UTF_8),
+                    StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+            return;
+        }
+        if (lhs.equals("pwd") || lhs.startsWith("pwd ")) {
+            String payload = System.getProperty("user.dir") + "\n";
+            Files.write(Path.of(outFile), payload.getBytes(StandardCharsets.UTF_8),
+                    StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+            return;
+        }
+        String[] argv = lhs.isEmpty() ? new String[0] : lhs.split("\\s+");
+        if (argv.length == 0)
+            return;
+
+        ProcessBuilder pb = new ProcessBuilder(argv);
+        pb.redirectOutput(new File(outFile));
+        pb.redirectError(ProcessBuilder.Redirect.INHERIT);
+        pb.redirectInput(ProcessBuilder.Redirect.INHERIT);
+
+        Process p = pb.start();
+        p.waitFor();
     }
 
     static String[] convert(String input) {
