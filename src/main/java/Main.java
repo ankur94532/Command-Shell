@@ -22,7 +22,7 @@ public class Main {
             for (int i = 0; i < input.length(); i++) {
                 if (input.charAt(i) == '>') {
                     if (input.charAt(i - 1) == '2') {
-                        input = input.substring(0, i) + input.substring(i);
+                        input = input.substring(0, i - 1) + input.substring(i);
                         System.out.println(input);
                     }
                     flag = true;
