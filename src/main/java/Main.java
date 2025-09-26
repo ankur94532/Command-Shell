@@ -273,8 +273,13 @@ public class Main {
             argv.addAll(sources);
             ProcessBuilder pb = new ProcessBuilder(argv);
             pb.directory(new File(System.getProperty("user.dir"))); // honor your `cd`
-            pb.redirectOutput(out.toFile()); // STDOUT → file
-            pb.redirectError(out.toFile()); // STDERR → terminal
+            if (error) {
+                pb.redirectError(ProcessBuilder.Redirect.to(out.toFile())); // STDERR → file
+                pb.redirectOutput(ProcessBuilder.Redirect.INHERIT); // STDOUT → terminal
+            } else {
+                pb.redirectOutput(out.toFile()); // STDOUT → file
+                pb.redirectError(ProcessBuilder.Redirect.INHERIT); // STDERR → terminal
+            }
             pb.redirectInput(ProcessBuilder.Redirect.INHERIT);
 
             Process p = pb.start();
