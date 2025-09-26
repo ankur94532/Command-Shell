@@ -20,18 +20,23 @@ public class Main {
             String input = scanner.nextLine();
             boolean flag = false;
             boolean error = false;
+            boolean append = false;
             for (int i = 0; i < input.length(); i++) {
                 if (input.charAt(i) == '>') {
                     if (input.charAt(i - 1) == '2') {
                         error = true;
                         input = input.substring(0, i - 1) + input.substring(i);
                     }
+                    if (i + 1 < input.length() && input.charAt(i + 1) == '>') {
+                        append = true;
+                        input = input.substring(0, i) + input.substring(i + 1);
+                    }
                     flag = true;
                     break;
                 }
             }
             if (flag) {
-                redirect(input, error);
+                redirect(input, error, append);
                 System.out.print("$ ");
                 continue;
             }
@@ -135,7 +140,7 @@ public class Main {
         }
     }
 
-    static void redirect(String input, boolean error) throws IOException, InterruptedException {
+    static void redirect(String input, boolean error, boolean append) throws IOException, InterruptedException {
         String[] inputs = input.split(" ");
         if (inputs[0].equals("echo")) {
             Deque<String> dq = new ArrayDeque<>();
@@ -180,6 +185,12 @@ public class Main {
             if (parent != null && !Files.exists(parent)) {
                 Files.createDirectories(parent);
             }
+            if (append) {
+                outBuf.append('\n');
+                Files.write(outPath,
+                        outBuf.toString().getBytes(StandardCharsets.UTF_8),
+                        StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+            }
             if (!error) {
                 outBuf.append('\n');
                 Files.write(outPath,
@@ -215,10 +226,20 @@ public class Main {
                     pb.directory(new File(System.getProperty("user.dir")));
 
                     if (error) {
-                        pb.redirectError(ProcessBuilder.Redirect.to(out.toFile())); // STDERR → file
+                        // 2> or 2>> dest
+                        if (append) {
+                            pb.redirectError(ProcessBuilder.Redirect.appendTo(out.toFile())); // STDERR >> file
+                        } else {
+                            pb.redirectError(ProcessBuilder.Redirect.to(out.toFile())); // STDERR > file
+                        }
                         pb.redirectOutput(ProcessBuilder.Redirect.INHERIT); // STDOUT → terminal
                     } else {
-                        pb.redirectOutput(out.toFile()); // STDOUT → file
+                        // > or >> dest
+                        if (append) {
+                            pb.redirectOutput(ProcessBuilder.Redirect.appendTo(out.toFile())); // STDOUT >> file
+                        } else {
+                            pb.redirectOutput(out.toFile()); // STDOUT > file
+                        }
                         pb.redirectError(ProcessBuilder.Redirect.INHERIT); // STDERR → terminal
                     }
 
@@ -274,10 +295,20 @@ public class Main {
             ProcessBuilder pb = new ProcessBuilder(argv);
             pb.directory(new File(System.getProperty("user.dir"))); // honor your `cd`
             if (error) {
-                pb.redirectError(ProcessBuilder.Redirect.to(out.toFile())); // STDERR → file
+                // 2> or 2>> dest
+                if (append) {
+                    pb.redirectError(ProcessBuilder.Redirect.appendTo(out.toFile())); // STDERR >> file
+                } else {
+                    pb.redirectError(ProcessBuilder.Redirect.to(out.toFile())); // STDERR > file
+                }
                 pb.redirectOutput(ProcessBuilder.Redirect.INHERIT); // STDOUT → terminal
             } else {
-                pb.redirectOutput(out.toFile()); // STDOUT → file
+                // > or >> dest
+                if (append) {
+                    pb.redirectOutput(ProcessBuilder.Redirect.appendTo(out.toFile())); // STDOUT >> file
+                } else {
+                    pb.redirectOutput(out.toFile()); // STDOUT > file
+                }
                 pb.redirectError(ProcessBuilder.Redirect.INHERIT); // STDERR → terminal
             }
             pb.redirectInput(ProcessBuilder.Redirect.INHERIT);
