@@ -305,6 +305,7 @@ public class Main {
                 }
                 response.offerLast(sb.toString());
             } else if (input.charAt(ind) == '\'') {
+                ind++;
                 StringBuilder sb = new StringBuilder();
                 while (ind < input.length()
                         && (input.charAt(ind) != '\'')) {
