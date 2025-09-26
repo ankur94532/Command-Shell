@@ -27,11 +27,16 @@ public class Main {
                         error = true;
                         input = input.substring(0, i - 1) + input.substring(i);
                     }
+                    flag = true;
+                    break;
+                }
+            }
+            for (int i = 0; i < input.length(); i++) {
+                if (input.charAt(i) == '>') {
                     if (i + 1 < input.length() && input.charAt(i + 1) == '>') {
                         append = true;
                         input = input.substring(0, i) + input.substring(i + 1);
                     }
-                    System.out.println(input);
                     flag = true;
                     break;
                 }
