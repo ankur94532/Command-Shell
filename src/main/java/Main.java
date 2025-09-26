@@ -247,7 +247,9 @@ public class Main {
             String catExe = resolveOnPath("cat");
             argv.add(catExe != null ? catExe : "cat");
             argv.addAll(sources);
-
+            for (String str : argv) {
+                System.out.println(str);
+            }
             ProcessBuilder pb = new ProcessBuilder(argv);
             pb.directory(new File(System.getProperty("user.dir"))); // honor your `cd`
             pb.redirectOutput(out.toFile()); // STDOUT → file
