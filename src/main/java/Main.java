@@ -170,6 +170,7 @@ public class Main {
                 if (it.hasNext())
                     outBuf.append(' ');
             }
+            outBuf.append('\n');
             Path outPath = Path.of(dest);
             Path parent = outPath.getParent();
             if (parent != null && !Files.exists(parent)) {
