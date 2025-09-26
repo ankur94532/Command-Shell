@@ -202,12 +202,11 @@ public class Main {
                 if (exe == null) {
                     System.out.println(argv[0] + ": not found");
                 } else {
-                    System.out.println("Hey");
                     argv[0] = exe;
                     ProcessBuilder pb = new ProcessBuilder(argv);
                     pb.directory(new java.io.File(System.getProperty("user.dir")));
                     pb.redirectOutput(out.toFile()); // STDOUT → file (truncate/create)
-                    pb.redirectError(out.toFile()); // STDERR → terminal
+                    pb.redirectError(ProcessBuilder.Redirect.to(out.toFile())); // STDERR → terminal
                     pb.redirectInput(ProcessBuilder.Redirect.INHERIT);
                     Process p = pb.start();
                     p.waitFor();
