@@ -141,6 +141,7 @@ public class Main {
     }
 
     static void redirect(String input, boolean error, boolean append) throws IOException, InterruptedException {
+        System.out.println(input);
         String[] inputs = input.split(" ");
         if (inputs[0].equals("echo")) {
             Deque<String> dq = new ArrayDeque<>();
