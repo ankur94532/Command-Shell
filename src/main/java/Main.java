@@ -1,10 +1,9 @@
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Deque;
-import java.util.Scanner;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) throws Exception {
@@ -13,6 +12,18 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         while (true) {
             String input = scanner.nextLine();
+            boolean flag = false;
+            for (int i = 0; i < input.length(); i++) {
+                if (input.charAt(i) == '>') {
+                    flag = true;
+                    break;
+                }
+            }
+            if (flag) {
+                redirect(input);
+                System.out.print("$ ");
+                continue;
+            }
             if (input.split(" ")[0].equals("echo")) {
                 System.out.println(print(input.substring(5)));
                 System.out.print("$ ");
@@ -92,7 +103,10 @@ public class Main {
             String str1 = input.substring(0, 4);
             if (str1.equals("type")) {
                 String str = input.substring(5);
-                if (str.equals("echo") || str.equals("exit") || str.equals("pwd") || str.equals("type")) {
+                if (str.equals("echo")
+                        || str.equals("exit")
+                        || str.equals("pwd")
+                        || str.equals("type")) {
                     System.out.println(str + " is a shell builtin");
                 } else {
                     System.out.println(find(str));
@@ -105,6 +119,25 @@ public class Main {
                 System.out.println(input + ": not found");
             }
             System.out.print("$ ");
+        }
+    }
+
+    public void redirect(String input) {
+        String[] parts = input.split(" ");
+        if (parts[0].equals("echo")) {
+            String str;
+            for (int i = 0; i < input.length(); i++) {
+                if (input.charAt(i) == '\'') {
+                    int j = i + 1;
+                    while (j < input.length() &&
+                            input.charAt(j) != '\'') {
+                        j++;
+                    }
+                    str = input.substring(i, j);
+                    break;
+                }
+            }
+            
         }
     }
 
@@ -189,8 +222,11 @@ public class Main {
                 ind++;
             } else {
                 StringBuilder sb = new StringBuilder();
-                while (ind < input.length() && input.charAt(ind) != ' ' && input.charAt(ind) != '\''
-                        && input.charAt(ind) != '"' && input.charAt(ind) != '\\') {
+                while (ind < input.length()
+                        && input.charAt(ind) != ' '
+                        && input.charAt(ind) != '\''
+                        && input.charAt(ind) != '"'
+                        && input.charAt(ind) != '\\') {
                     sb.append(input.charAt(ind));
                     ind++;
                 }
