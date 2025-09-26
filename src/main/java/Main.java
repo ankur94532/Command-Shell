@@ -202,7 +202,7 @@ public class Main {
                     ProcessBuilder pb = new ProcessBuilder(argv);
                     pb.directory(new java.io.File(System.getProperty("user.dir")));
                     pb.redirectOutput(out.toFile()); // STDOUT → file (truncate/create)
-                    pb.redirectError(ProcessBuilder.Redirect.INHERIT); // STDERR → terminal
+                    pb.redirectError(out.toFile()); // STDERR → terminal
                     pb.redirectInput(ProcessBuilder.Redirect.INHERIT);
                     Process p = pb.start();
                     p.waitFor();
@@ -254,7 +254,7 @@ public class Main {
             ProcessBuilder pb = new ProcessBuilder(argv);
             pb.directory(new File(System.getProperty("user.dir"))); // honor your `cd`
             pb.redirectOutput(out.toFile()); // STDOUT → file
-            pb.redirectError(ProcessBuilder.Redirect.INHERIT); // STDERR → terminal
+            pb.redirectError(out.toFile()); // STDERR → terminal
             pb.redirectInput(ProcessBuilder.Redirect.INHERIT);
 
             Process p = pb.start();
