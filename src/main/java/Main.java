@@ -45,7 +45,7 @@ public class Main {
                     break;
                 }
             }
-            if (error) {
+            if (System.console() == null) {
                 System.out.println("$ " + input1);
             }
             if (flag) {
