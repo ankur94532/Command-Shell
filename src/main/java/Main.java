@@ -45,12 +45,6 @@ public class Main {
                     break;
                 }
             }
-            if (error) {
-                System.out.println("$ " + input1);
-                System.out.println(input);
-                System.out.println(error);
-                System.out.println(append);
-            }
             if (flag) {
                 redirect(input, error, append);
                 System.out.print("$ ");
@@ -338,6 +332,7 @@ public class Main {
                     if (error) {
                         // 2> or 2>> dest
                         if (append) {
+                            System.out.println("hey");
                             pb.redirectError(ProcessBuilder.Redirect.appendTo(out.toFile())); // STDERR >> file
                         } else {
                             pb.redirectError(ProcessBuilder.Redirect.to(out.toFile())); // STDERR > file
