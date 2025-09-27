@@ -161,7 +161,6 @@ public class Main {
 
             if (c == '\n' || c == '\r') {
                 System.out.println();
-                System.out.print("\r\033[2K");
                 return sb.toString();
             } else if (c == '\t') {
                 String str = sb.toString();
