@@ -17,7 +17,7 @@ public class Main {
         System.out.print("$ ");
         Scanner scanner = new Scanner(System.in);
         while (true) {
-            String input = scanner.nextLine();
+            String input = takeInput(scanner);
             boolean flag = false;
             boolean error = false;
             boolean append = false;
@@ -143,6 +143,40 @@ public class Main {
                 System.out.println(input + ": not found");
             }
             System.out.print("$ ");
+        }
+    }
+
+    static String takeInput(Scanner scanner) throws IOException {
+        final InputStream in = System.in;
+        StringBuilder sb = new StringBuilder();
+        while (true) {
+            int r = in.read();
+            char c = (char) (r);
+            if (c == '\n' || c == '\r') { // Enter
+                System.out.print("\r\n");
+                System.out.flush();
+                return sb.toString();
+            } else if (c == '\t') {
+                String str = sb.toString();
+                if (str.equals("e") || str.equals("ec") || str.equals("ech") || str.equals("echo")) {
+                    sb.setLength(0);
+                    System.out.print("\r\033[2K");
+                    System.out.print("$ ");
+                    System.out.print("echo ");
+                    System.out.flush();
+                    sb.append("echo");
+                }
+                if (str.equals("e") || str.equals("ex") || str.equals("exi") || str.equals("exit")) {
+                    sb.setLength(0);
+                    System.out.print("\r\033[2K");
+                    System.out.print("$ ");
+                    System.out.print("exit ");
+                    System.out.flush();
+                    sb.append("exit");
+                }
+            } else {
+                sb.append(c);
+            }
         }
     }
 
