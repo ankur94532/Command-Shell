@@ -45,6 +45,9 @@ public class Main {
                     break;
                 }
             }
+            if (error) {
+                System.out.println("$ " + input1);
+            }
             if (flag) {
                 redirect(input, error, append);
                 System.out.print("$ ");
