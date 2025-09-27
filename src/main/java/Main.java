@@ -189,7 +189,6 @@ public class Main {
             } else { // Printable ASCII
                 sb.append(c);
                 System.out.print("\b \b");
-                System.out.print(c); // echo typed char
                 System.out.flush();
             } // ignore other controls (ESC, etc.)
         }
