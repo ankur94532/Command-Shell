@@ -18,12 +18,12 @@ public class Main {
         String saved = saveTtyState();
         while (true) {
             String input = "";
-            setTerminalRawMode();
-            input = takeInput();
-            restoreTtyState(saved);
             if (System.console() != null) {
                 System.out.println("hey");
             }
+            setTerminalRawMode();
+            input = takeInput();
+            restoreTtyState(saved);
             boolean flag = false;
             boolean error = false;
             boolean append = false;
