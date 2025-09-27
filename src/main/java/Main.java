@@ -21,6 +21,9 @@ public class Main {
             setTerminalRawMode();
             input = takeInput();
             restoreTtyState(saved);
+            if (System.console() != null) {
+                System.out.println("hey");
+            }
             boolean flag = false;
             boolean error = false;
             boolean append = false;
