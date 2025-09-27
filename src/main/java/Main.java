@@ -28,7 +28,15 @@ public class Main {
                     restoreTtyState(saved);
                 }
             } else {
-                input = new BufferedReader(new InputStreamReader(System.in)).readLine();
+                BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+                input = br.readLine(); // read whole line
+
+                // Echo the typed command line ourselves, replacing the existing "$ " prompt
+                // line
+                if (input == null)
+                    break; // EOF
+                System.out.print("\r\033[2K$ " + input + "\n");
+                System.out.flush();
             }
 
             if (input == null)
