@@ -160,14 +160,14 @@ public class Main {
             char c = (char) r;
 
             if (c == '\n' || c == '\r') {
-                System.out.print("\r\033[2K$ ");
+                System.out.print("\r\033[2K");
                 return sb.toString();
             } else if (c == '\t') {
                 String str = sb.toString();
                 if (str.equals("e") || str.equals("ec") || str.equals("ech") || str.equals("echo")) {
                     sb.setLength(0);
                     sb.append("echo ");
-                    System.out.print("\r\033[2K");
+                    System.out.print("\r\033[2K$ ");
                     System.out.print(sb);
                     System.out.flush();
                 } else if (str.equals("ex") || str.equals("exi") || str.equals("exit")) { // else-if!
