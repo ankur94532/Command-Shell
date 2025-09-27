@@ -264,7 +264,7 @@ public class Main {
             }
 
             // Printable ASCII
-            if (c >= 32 && c <= 126) {
+            else {
                 sb.append(c);
                 if (echoKeys) {
                     System.out.print(c);
