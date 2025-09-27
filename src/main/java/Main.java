@@ -161,6 +161,7 @@ public class Main {
                  * System.out.print(sb.toString());
                  */
                 System.out.flush();
+                System.out.println(sb.toString());
                 return sb.toString();
             } else if (c == '\t') {
                 String str = sb.toString();
