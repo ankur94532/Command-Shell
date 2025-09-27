@@ -23,7 +23,7 @@ public class Main {
                 setTerminalRawMode();
                 input = takeInput();
                 restoreTtyState(saved);
-                System.out.println();
+                System.out.println("");
                 System.out.print("\r\033[2K$ ");
             } else {
                 Scanner scanner = new Scanner(System.in);
