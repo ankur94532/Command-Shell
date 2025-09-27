@@ -18,9 +18,6 @@ public class Main {
         String saved = saveTtyState();
         while (true) {
             String input = "";
-            if (System.console() != null) {
-                System.out.println("hey");
-            }
             setTerminalRawMode();
             input = takeInput();
             restoreTtyState(saved);
@@ -191,6 +188,7 @@ public class Main {
                 }
             } else { // Printable ASCII
                 sb.append(c);
+                System.out.print("\b \b");
                 System.out.print(c); // echo typed char
                 System.out.flush();
             } // ignore other controls (ESC, etc.)
