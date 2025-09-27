@@ -188,7 +188,6 @@ public class Main {
             } else {
                 sb.append(c);
                 System.out.print(c);
-                System.out.print("\b \b");
                 System.out.flush();
             }
         }
