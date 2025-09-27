@@ -45,9 +45,6 @@ public class Main {
                     break;
                 }
             }
-            if (System.console() == null) {
-                System.out.println("$ " + input1);
-            }
             if (flag) {
                 redirect(input, error, append);
                 System.out.print("$ ");
@@ -190,6 +187,7 @@ public class Main {
                 }
             } else {
                 sb.append(c);
+                System.out.print(c);
                 System.out.print("\b \b");
                 System.out.flush();
             }
