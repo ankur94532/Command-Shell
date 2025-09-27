@@ -147,6 +147,7 @@ public class Main {
     }
 
     static String takeInput(Scanner scanner) throws IOException {
+        System.out.println("hlo");
         final InputStream in = System.in;
         StringBuilder sb = new StringBuilder();
         while (true) {
