@@ -19,12 +19,12 @@ public class Main {
         while (true) {
             String input = "";
             boolean echoKeys = shouldEchoPerChar();
-            System.out.println(echoKeys);
             if (echoKeys) {
                 setTerminalRawMode();
                 input = takeInput();
                 restoreTtyState(saved);
             } else {
+                System.out.println("hey");
                 Scanner scanner = new Scanner(System.in);
                 input = scanner.nextLine();
             }
