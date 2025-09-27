@@ -153,30 +153,43 @@ public class Main {
         StringBuilder sb = new StringBuilder();
         while (true) {
             int r = in.read();
-            char c = (char) (r);
+            if (r == -1)
+                return null; // EOF safety
+            char c = (char) r;
+
             if (c == '\n' || c == '\r') { // Enter
+                System.out.print("\r\n"); // <-- print newline so next prompt is on its own line
+                System.out.flush();
                 return sb.toString();
-            } else if (c == '\t') {
+            } else if (c == '\t') { // Tab completion demo
                 String str = sb.toString();
                 if (str.equals("e") || str.equals("ec") || str.equals("ech") || str.equals("echo")) {
                     sb.setLength(0);
-                    System.out.print("\r\033[2K");
-                    System.out.print("$ ");
-                    System.out.print("echo ");
+                    sb.append("echo"); // keep buffer == screen
+                    System.out.print("\r\033[2K$ ");
+                    System.out.print(sb);
                     System.out.flush();
-                    sb.append("echo");
-                }
-                if (str.equals("e") || str.equals("ex") || str.equals("exi") || str.equals("exit")) {
+                } else if (str.equals("ex") || str.equals("exi") || str.equals("exit")) { // else-if!
                     sb.setLength(0);
-                    System.out.print("\r\033[2K");
-                    System.out.print("$ ");
-                    System.out.print("exit ");
-                    System.out.flush();
                     sb.append("exit");
+                    System.out.print("\r\033[2K$ ");
+                    System.out.print(sb);
+                    System.out.flush();
+                } else {
+                    System.out.print("\007"); // bell on no match
+                    System.out.flush();
                 }
-            } else {
+            } else if (c == 127 || c == 8) { // Backspace (DEL or BS)
+                if (sb.length() > 0) {
+                    sb.deleteCharAt(sb.length() - 1);
+                    System.out.print("\b \b"); // erase char visually
+                    System.out.flush();
+                }
+            } else if (c >= 32 && c <= 126) { // Printable ASCII
                 sb.append(c);
-            }
+                System.out.print(c); // echo typed char
+                System.out.flush();
+            } // ignore other controls (ESC, etc.)
         }
     }
 
