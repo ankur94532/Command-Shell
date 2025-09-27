@@ -20,8 +20,7 @@ public class Main {
             String input = "";
             boolean echoKeys = shouldEchoPerChar();
             if (echoKeys) {
-                setTerminalRawMode();
-                input = takeInput();
+                input = takeInput(setTerminalRawMode());
                 restoreTtyState(saved);
             } else {
                 Scanner scanner = new Scanner(System.in);
@@ -182,7 +181,7 @@ public class Main {
         }
     }
 
-    static String takeInput() throws IOException {
+    static String takeInput(boolean printOnEnter) throws IOException {
         final InputStream in = System.in;
         StringBuilder sb = new StringBuilder();
         while (true) {
@@ -192,8 +191,10 @@ public class Main {
             char c = (char) r;
 
             if (c == '\n' || c == '\r') {
-                System.out.println(sb.toString());
-                System.out.flush();
+                if (printOnEnter) { // only when echo was disabled
+                    System.out.println(sb.toString());
+                    System.out.flush();
+                }
                 return sb.toString();
             } else if (c == '\t') {
                 String str = sb.toString();
@@ -237,11 +238,13 @@ public class Main {
         }
     }
 
-    static void setTerminalRawMode() {
+    static boolean setTerminalRawMode() {
         try {
-            new ProcessBuilder("/bin/sh", "-c", "stty -echo -icanon min 1 time 0 </dev/tty")
-                    .inheritIO().start().waitFor();
-        } catch (Exception ignored) {
+            Process p = new ProcessBuilder("/bin/sh", "-c",
+                    "stty -echo -icanon min 1 time 0 </dev/tty").start();
+            return p.waitFor() == 0; // true = raw mode actually applied
+        } catch (Exception e) {
+            return false;
         }
     }
 
