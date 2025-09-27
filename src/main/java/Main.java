@@ -20,9 +20,6 @@ public class Main {
             setTerminalRawMode();
             String input = takeInput();
             restoreTtyState(saved);
-            if (input.split(" ")[0].equals("ls")) {
-                System.out.println(input);
-            }
             boolean flag = false;
             boolean error = false;
             boolean append = false;
