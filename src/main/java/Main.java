@@ -194,7 +194,6 @@ public class Main {
             char c = (char) r;
 
             if (c == '\n' || c == '\r') {
-                System.out.println();
                 return sb.toString();
             } else if (c == '\t') {
                 String str = sb.toString();
