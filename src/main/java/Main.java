@@ -167,7 +167,7 @@ public class Main {
                 if (str.equals("e") || str.equals("ec") || str.equals("ech") || str.equals("echo")) {
                     sb.setLength(0);
                     sb.append("echo ");
-                    System.out.print("\r\033[2K$ ");
+                    System.out.print("\r\033[2K");
                     System.out.print(sb);
                     System.out.flush();
                 } else if (str.equals("ex") || str.equals("exi") || str.equals("exit")) { // else-if!
