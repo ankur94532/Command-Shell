@@ -20,9 +20,6 @@ public class Main {
             setTerminalRawMode();
             String input = takeInput();
             restoreTtyState(saved);
-            if (input.split(" ")[0].equals("ls")) {
-                System.out.println(input);
-            }
             boolean flag = false;
             boolean error = false;
             boolean append = false;
@@ -158,6 +155,9 @@ public class Main {
             int r = in.read();
             char c = (char) (r);
             if (c == '\n' || c == '\r') { // Enter
+                System.out.print("\r\033[2K");
+                System.out.print("$ ");
+                System.out.println(sb.toString());
                 return sb.toString();
             } else if (c == '\t') {
                 String str = sb.toString();
