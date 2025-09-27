@@ -17,9 +17,14 @@ public class Main {
         System.out.print("$ ");
         String saved = saveTtyState();
         while (true) {
-            setTerminalRawMode();
-            String input = takeInput();
-            restoreTtyState(saved);
+            String input = "";
+            if (System.console() != null) {
+                setTerminalRawMode();
+                input = takeInput();
+                restoreTtyState(saved);
+            } else {
+                input = new java.io.BufferedReader(new java.io.InputStreamReader(System.in)).readLine();
+            }
             boolean flag = false;
             boolean error = false;
             boolean append = false;
