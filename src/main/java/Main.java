@@ -160,6 +160,7 @@ public class Main {
             char c = (char) r;
 
             if (c == '\n' || c == '\r') {
+                System.out.print("\r\033[2K$ ");
                 return sb.toString();
             } else if (c == '\t') {
                 String str = sb.toString();
