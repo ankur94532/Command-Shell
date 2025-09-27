@@ -159,7 +159,6 @@ public class Main {
                 System.out.flush();
                 return sb.toString();
             } else if (c == '\t') {
-                System.out.println("hi");
                 String str = sb.toString();
                 if (str.equals("e") || str.equals("ec") || str.equals("ech") || str.equals("echo")) {
                     sb.setLength(0);
