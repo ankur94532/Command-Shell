@@ -159,8 +159,6 @@ public class Main {
             char c = (char) r;
 
             if (c == '\n' || c == '\r') { // Enter
-                System.out.print("\r\n"); // <-- print newline so next prompt is on its own line
-                System.out.flush();
                 return sb.toString();
             } else if (c == '\t') { // Tab completion demo
                 String str = sb.toString();
