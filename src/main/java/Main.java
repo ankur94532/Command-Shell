@@ -23,13 +23,12 @@ public class Main {
             if (System.console() != null) {
                 setTerminalRawMode();
                 try {
-                    // read without echoing keys, but print newline on Enter
-                    input = takeInput(false);
+                    input = takeInput(false); // <-- do NOT echo, and do NOT print newline
                 } finally {
                     restoreTtyState(saved);
                 }
             } else {
-                input = nonInteractiveReader.readLine();
+                input = new BufferedReader(new InputStreamReader(System.in)).readLine();
             }
 
             if (input == null)
@@ -207,8 +206,6 @@ public class Main {
         return takeInput(echoKeys);
     }
 
-    // Grader-safe: echoKeys = false (no per-char echo).
-    // Still handles Tab by redrawing the completed line.
     static String takeInput(boolean echoKeys) throws IOException {
         final InputStream in = System.in;
         StringBuilder sb = new StringBuilder();
@@ -219,14 +216,17 @@ public class Main {
                 return null; // EOF
             char c = (char) r;
 
-            if (c == '\n' || c == '\r') { // Enter
-                System.out.print("\r\n"); // put next prompt on a fresh line
-                System.out.flush();
+            // Enter
+            if (c == '\n' || c == '\r') {
+                if (echoKeys) {
+                    System.out.print("\r\n");
+                    System.out.flush();
+                }
                 return sb.toString();
             }
 
-            if (c == '\t') { // Tab completion
-                // Only complete the first word (no spaces typed yet)
+            // Tab completion (complete first word only)
+            if (c == '\t') {
                 boolean hasSpace = false;
                 for (int i = 0; i < sb.length(); i++) {
                     if (Character.isWhitespace(sb.charAt(i))) {
@@ -235,13 +235,13 @@ public class Main {
                     }
                 }
                 if (!hasSpace) {
-                    String comp = completeFirstWord(sb.toString());
+                    String comp = completeFirstWord(sb.toString()); // e.g., returns "echo "
                     if (comp != null) {
                         sb.setLength(0);
                         sb.append(comp);
-                        redraw(sb); // show `$ echo ` (with space)
+                        redraw(sb); // show `$ echo ` even if echoKeys == false
                     } else {
-                        System.out.print("\007"); // bell on no match
+                        System.out.print("\007"); // bell
                         System.out.flush();
                     }
                 } else {
@@ -251,7 +251,8 @@ public class Main {
                 continue;
             }
 
-            if (c == 127 || c == 8) { // Backspace
+            // Backspace
+            if (c == 127 || c == 8) {
                 if (sb.length() > 0) {
                     sb.deleteCharAt(sb.length() - 1);
                     if (echoKeys) {
@@ -262,7 +263,8 @@ public class Main {
                 continue;
             }
 
-            if (c >= 32 && c <= 126) { // Printable ASCII
+            // Printable ASCII
+            if (c >= 32 && c <= 126) {
                 sb.append(c);
                 if (echoKeys) {
                     System.out.print(c);
