@@ -157,14 +157,8 @@ public class Main {
             if (c == '\n' || c == '\r') { // Enter
                 System.out.print("\r\033[2K");
                 System.out.print("$ ");
-                System.out.print(sb.toString());
-                /*
-                 * System.out.print("\r\033[2K");
-                 * System.out.print("$ ");
-                 * System.out.print(sb.toString());
-                 * System.out.flush();
-                 * System.out.println(sb.toString());
-                 */
+                System.out.println(sb.toString());
+                System.out.flush();
                 return sb.toString();
             } else if (c == '\t') {
                 String str = sb.toString();
