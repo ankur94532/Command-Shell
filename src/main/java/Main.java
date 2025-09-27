@@ -41,7 +41,10 @@ public class Main {
 
             if (input == null)
                 break; // EOF
-            if (input.isEmpty()) {
+            System.out.print("\r\033[2K$ " + input + "\n");
+            System.out.flush();
+
+            if (input.isEmpty()) { // blank line: print next prompt
                 System.out.print("$ ");
                 continue;
             }
@@ -67,15 +70,7 @@ public class Main {
             }
 
             if (flag) {
-                // If we redirected stderr to a file (2>, 2>>), nothing reaches the terminal.
-                // Add a newline so the next prompt doesn't stick to the previous "$ ".
-                boolean needNewline = error;
-
                 redirect(input, error, append);
-
-                if (needNewline) {
-                    System.out.print("\r\n");
-                }
                 System.out.print("$ ");
                 continue;
             }
