@@ -60,6 +60,7 @@ public class Main {
 
             if (flag) {
                 redirect(input, error, append);
+                System.out.print("\r\n");
                 System.out.print("$ ");
                 continue;
             }
