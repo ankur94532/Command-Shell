@@ -24,6 +24,7 @@ public class Main {
             boolean flag = false;
             boolean error = false;
             boolean append = false;
+            String input1 = input;
             for (int i = 0; i < input.length(); i++) {
                 if (input.charAt(i) == '>') {
                     if (input.charAt(i - 1) == '2') {
@@ -43,6 +44,9 @@ public class Main {
                     flag = true;
                     break;
                 }
+            }
+            if (error) {
+                System.out.println(input1);
             }
             if (flag) {
                 redirect(input, error, append);
