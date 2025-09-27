@@ -15,9 +15,11 @@ public class Main {
     public static void main(String[] args) throws Exception {
         // Uncomment this block to pass the first stage
         System.out.print("$ ");
-        Scanner scanner = new Scanner(System.in);
+        String saved = saveTtyState();
         while (true) {
-            String input = takeInput(scanner);
+            setTerminalRawMode();
+            String input = takeInput();
+            restoreTtyState(saved);
             boolean flag = false;
             boolean error = false;
             boolean append = false;
@@ -146,8 +148,7 @@ public class Main {
         }
     }
 
-    static String takeInput(Scanner scanner) throws IOException {
-        System.out.println("hlo");
+    static String takeInput() throws IOException {
         final InputStream in = System.in;
         StringBuilder sb = new StringBuilder();
         while (true) {
@@ -179,6 +180,36 @@ public class Main {
             } else {
                 sb.append(c);
             }
+        }
+    }
+
+    static String saveTtyState() {
+        try {
+            Process p = new ProcessBuilder("/bin/sh", "-c", "stty -g </dev/tty")
+                    .redirectErrorStream(true).start();
+            byte[] out = p.getInputStream().readAllBytes();
+            p.waitFor();
+            return new String(out).trim();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    static void setTerminalRawMode() {
+        try {
+            new ProcessBuilder("/bin/sh", "-c", "stty -echo -icanon min 1 time 0 </dev/tty")
+                    .inheritIO().start().waitFor();
+        } catch (Exception ignored) {
+        }
+    }
+
+    static void restoreTtyState(String state) {
+        if (state == null || state.isEmpty())
+            return;
+        try {
+            new ProcessBuilder("/bin/sh", "-c", "stty " + state + " </dev/tty")
+                    .inheritIO().start().waitFor();
+        } catch (Exception ignored) {
         }
     }
 
