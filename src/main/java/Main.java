@@ -189,7 +189,6 @@ public class Main {
             } else {
                 sb.append(c);
                 System.out.print(c);
-                System.out.flush();
             }
         }
     }
