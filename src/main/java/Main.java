@@ -335,7 +335,6 @@ public class Main {
                     if (error) {
                         // 2> or 2>> dest
                         if (append) {
-                            System.out.println("hey");
                             pb.redirectError(ProcessBuilder.Redirect.appendTo(out.toFile())); // STDERR >> file
                         } else {
                             pb.redirectError(ProcessBuilder.Redirect.to(out.toFile())); // STDERR > file
