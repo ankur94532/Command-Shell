@@ -185,7 +185,7 @@ public class Main {
                     System.out.print("\b \b"); // erase char visually
                     System.out.flush();
                 }
-            } else if (c >= 32 && c <= 126) { // Printable ASCII
+            } else { // Printable ASCII
                 sb.append(c);
                 System.out.print(c); // echo typed char
                 System.out.flush();
