@@ -155,8 +155,6 @@ public class Main {
             int r = in.read();
             char c = (char) (r);
             if (c == '\n' || c == '\r') { // Enter
-                System.out.print("\r\n");
-                System.out.print("$ ");
                 return sb.toString();
             } else if (c == '\t') {
                 String str = sb.toString();
