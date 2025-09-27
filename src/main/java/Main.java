@@ -18,13 +18,18 @@ public class Main {
         String saved = saveTtyState();
         while (true) {
             String input = "";
-            setTerminalRawMode();
-            input = takeInput();
-            restoreTtyState(saved);
+            boolean echoKeys = shouldEchoPerChar();
+            if (echoKeys) {
+                setTerminalRawMode();
+                input = takeInput();
+                restoreTtyState(saved);
+            } else {
+                Scanner scanner = new Scanner(System.in);
+                input = scanner.nextLine();
+            }
             boolean flag = false;
             boolean error = false;
             boolean append = false;
-            String input1 = input;
             for (int i = 0; i < input.length(); i++) {
                 if (input.charAt(i) == '>') {
                     if (input.charAt(i - 1) == '2') {
@@ -147,6 +152,32 @@ public class Main {
                 System.out.println(input + ": not found");
             }
             System.out.print("$ ");
+        }
+    }
+
+    static boolean shouldEchoPerChar() {
+        // Allow an explicit override for debugging
+        String force = System.getenv("SHELL_ECHO_KEYS");
+        if ("1".equals(force) || "true".equalsIgnoreCase(force))
+            return true;
+        if ("0".equals(force) || "false".equalsIgnoreCase(force))
+            return false;
+
+        // No interactive console? It's probably CI/pipes → don't echo per char
+        if (System.console() == null)
+            return false;
+
+        // Do we actually have a controlling TTY?
+        return hasControllingTTY();
+    }
+
+    static boolean hasControllingTTY() {
+        try {
+            // stty will fail if there's no controlling tty
+            Process p = new ProcessBuilder("/bin/sh", "-c", "stty -g </dev/tty >/dev/null 2>&1").start();
+            return p.waitFor() == 0;
+        } catch (Exception e) {
+            return false;
         }
     }
 
