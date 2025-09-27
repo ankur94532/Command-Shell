@@ -47,6 +47,9 @@ public class Main {
             }
             if (error) {
                 System.out.println("$ " + input1);
+                System.out.println(input);
+                System.out.println(error);
+                System.out.println(append);
             }
             if (flag) {
                 redirect(input, error, append);
@@ -159,16 +162,16 @@ public class Main {
         while (true) {
             int r = in.read();
             if (r == -1)
-                return null; // EOF safety
+                return null;
             char c = (char) r;
 
-            if (c == '\n' || c == '\r') { // Enter
+            if (c == '\n' || c == '\r') {
                 return sb.toString();
-            } else if (c == '\t') { // Tab completion demo
+            } else if (c == '\t') {
                 String str = sb.toString();
                 if (str.equals("e") || str.equals("ec") || str.equals("ech") || str.equals("echo")) {
                     sb.setLength(0);
-                    sb.append("echo "); // keep buffer == screen
+                    sb.append("echo ");
                     System.out.print("\r\033[2K$ ");
                     System.out.print(sb);
                     System.out.flush();
@@ -179,20 +182,20 @@ public class Main {
                     System.out.print(sb);
                     System.out.flush();
                 } else {
-                    System.out.print("\007"); // bell on no match
+                    System.out.print("\007");
                     System.out.flush();
                 }
-            } else if (c == 127 || c == 8) { // Backspace (DEL or BS)
+            } else if (c == 127 || c == 8) {
                 if (sb.length() > 0) {
                     sb.deleteCharAt(sb.length() - 1);
-                    System.out.print("\b \b"); // erase char visually
+                    System.out.print("\b \b");
                     System.out.flush();
                 }
-            } else { // Printable ASCII
+            } else {
                 sb.append(c);
                 System.out.print("\b \b");
                 System.out.flush();
-            } // ignore other controls (ESC, etc.)
+            }
         }
     }
 
