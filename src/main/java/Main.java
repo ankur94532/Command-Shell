@@ -30,20 +30,20 @@ public class Main {
                     if (ch == '\t') {
                         String str = sb.toString();
                         if (str.equals("e")) {
-                            sb.append("cho");
-                            System.out.print("cho");
+                            sb.append("cho ");
+                            System.out.print("cho ");
                         } else if (str.equals("ec")) {
-                            sb.append("ho");
-                            System.out.print("ho");
+                            sb.append("ho ");
+                            System.out.print("ho ");
                         } else if (str.equals("ech")) {
-                            sb.append("o");
-                            System.out.print("o");
+                            sb.append("o ");
+                            System.out.print("o ");
                         } else if (str.equals("ex")) {
-                            sb.append("it");
-                            System.out.print("it");
+                            sb.append("it ");
+                            System.out.print("it ");
                         } else if (str.equals("exi")) {
-                            sb.append("t");
-                            System.out.print("t");
+                            sb.append("t ");
+                            System.out.print("t ");
                         }
                     } else if (ch == '\r' || ch == '\n') {
                         System.out.println();
