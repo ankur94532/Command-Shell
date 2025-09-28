@@ -1,9 +1,11 @@
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.util.*;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -13,261 +15,177 @@ import java.nio.file.StandardOpenOption;
 
 public class Main {
     public static void main(String[] args) throws Exception {
-        // Uncomment this block to pass the first stage
-        System.out.print("$ ");
-        String saved = saveTtyState();
-        while (true) {
-            String input = "";
-            if (System.console() != null) {
-                input = takeInput(setTerminalRawMode());
-                restoreTtyState(saved);
-            } else {
-                Scanner scanner = new Scanner(System.in);
-                input = scanner.nextLine();
-            }
-
-            boolean flag = false;
-            boolean error = false;
-            boolean append = false;
-            for (int i = 0; i < input.length(); i++) {
-                if (input.charAt(i) == '>') {
-                    if (input.charAt(i - 1) == '2') {
-                        error = true;
-                        input = input.substring(0, i - 1) + input.substring(i);
-                    }
-                    flag = true;
-                    break;
-                }
-            }
-            for (int i = 0; i < input.length(); i++) {
-                if (input.charAt(i) == '>') {
-                    if (i + 1 < input.length() && input.charAt(i + 1) == '>') {
-                        append = true;
-                        input = input.substring(0, i) + input.substring(i + 1);
-                    }
-                    flag = true;
-                    break;
-                }
-            }
-            if (flag) {
-                redirect(input, error, append);
+        ProcessBuilder processBuilder = new ProcessBuilder("/bin/sh", "-c", "stty -echo -icanon min 1 < /dev/tty");
+        processBuilder.directory(new File("").getCanonicalFile());
+        Process rawMode = processBuilder.start();
+        rawMode.waitFor();
+        try (InputStreamReader inputStreamReader = new InputStreamReader(System.in);
+                BufferedReader in = new BufferedReader(inputStreamReader)) {
+            StringBuilder sb = new StringBuilder();
+            while (true) {
                 System.out.print("$ ");
-                continue;
-            }
-            if (input.split(" ")[0].equals("echo")) {
-                System.out.println(print(input.substring(5)));
-                System.out.print("$ ");
-                continue;
-            }
-            if (input.split(" ")[0].equals("cat")) {
-                String[] files = convert(input); // extracts only quoted filenames
-                if (files.length > 0) {
-                    for (int i = 0; i < files.length; i++) {
-                        content(files[i]); // your existing helper
-                    }
-                }
-                System.out.print("$ ");
-                continue;
-            }
-
-            if (input.charAt(0) == '\'') {
-                int ind = 1;
-                for (int i = 1; i < input.length(); i++) {
-                    if (input.charAt(i) == '\'') {
-                        ind = i;
+                sb.setLength(0);
+                while (true) {
+                    int ch = in.read();
+                    if (ch == '\t') {
+                        String str = sb.toString();
+                        if (str.equals("e")) {
+                            sb.append("cho");
+                            System.out.print("cho");
+                        } else if (str.equals("ec")) {
+                            sb.append("ho");
+                            System.out.print("ho");
+                        } else if (str.equals("ech")) {
+                            sb.append("o");
+                            System.out.print("o");
+                        } else if (str.equals("ex")) {
+                            sb.append("it");
+                            System.out.print("it");
+                        } else if (str.equals("exi")) {
+                            sb.append("t");
+                            System.out.print("t");
+                        }
+                    } else if (ch == '\r' || ch == '\n') {
+                        System.out.println();
                         break;
-                    }
-                }
-                content(input.substring(ind + 2));
-                System.out.print("$ ");
-                continue;
-            }
-            if (input.charAt(0) == '"') {
-                int ind = 1;
-                for (int i = 1; i < input.length(); i++) {
-                    if (input.charAt(i) == '"') {
-                        ind = i;
-                        break;
-                    }
-                }
-                content(input.substring(ind + 2));
-                System.out.print("$ ");
-                continue;
-            }
-            if (input.split(" ")[0].equals("cd")) {
-                String path = input.split(" ")[1];
-                if (path.charAt(0) == '.') {
-                    change(path);
-                    System.out.print("$ ");
-                    continue;
-                }
-                if (path.charAt(0) == '~') {
-                    System.setProperty("user.dir", System.getenv("HOME"));
-                    System.out.print("$ ");
-                    continue;
-                }
-                path = exists(path);
-                if (path != null) {
-                    System.setProperty("user.dir", path);
-                } else {
-                    System.out.println(
-                            "cd: " + input.split(" ")[1] + ": No such file or directory");
-                }
-                System.out.print("$ ");
-                continue;
-            }
-            if (input.equals("pwd")) {
-                System.out.println(System.getProperty("user.dir"));
-                System.out.print("$ ");
-                continue;
-            }
-            if (input.split(" ")[0].equals("pwd")) {
-                System.out.println(Path.of("").toAbsolutePath());
-                System.out.print("$ ");
-                continue;
-            }
-            if (check(input)) {
-                Process process = Runtime.getRuntime().exec(input.split(" "));
-                process.getInputStream().transferTo(System.out);
-                System.out.print("$ ");
-                continue;
-            }
-            String str1 = input.substring(0, 4);
-            if (str1.equals("type")) {
-                String str = input.substring(5);
-                if (str.equals("echo")
-                        || str.equals("exit")
-                        || str.equals("pwd")
-                        || str.equals("type")) {
-                    System.out.println(str + " is a shell builtin");
-                } else {
-                    System.out.println(find(str));
-                }
-            } else if (str1.equals("echo")) {
-                System.out.println(input.substring(5));
-            } else if (str1.equals("exit")) {
-                System.exit(0);
-            } else {
-                System.out.println(input + ": not found");
-            }
-            System.out.print("$ ");
-        }
-    }
-
-    static boolean shouldEchoPerChar() {
-        // Allow an explicit override for debugging
-        String force = System.getenv("SHELL_ECHO_KEYS");
-        if ("1".equals(force) || "true".equalsIgnoreCase(force))
-            return true;
-        if ("0".equals(force) || "false".equalsIgnoreCase(force))
-            return false;
-
-        // No interactive console? It's probably CI/pipes → don't echo per char
-        if (System.console() == null)
-            return false;
-
-        // Do we actually have a controlling TTY?
-        return hasControllingTTY();
-    }
-
-    static boolean hasControllingTTY() {
-        try {
-            // stty will fail if there's no controlling tty
-            Process p = new ProcessBuilder("/bin/sh", "-c", "stty -g </dev/tty >/dev/null 2>&1").start();
-            return p.waitFor() == 0;
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
-    static String takeInput(boolean printOnEnter) throws IOException {
-        final InputStream in = System.in;
-        StringBuilder sb = new StringBuilder();
-        while (true) {
-            int r = in.read();
-            if (r == -1)
-                return null;
-            char c = (char) r;
-
-            if (c == '\n' || c == '\r') {
-                if (printOnEnter) {
-                    System.out.print("\r\n");
-                    System.out.flush();
-                }
-                return sb.toString();
-            } else if (c == '\t') {
-                String str = sb.toString();
-                if (str.equals("e") || str.equals("ec") || str.equals("ech") || str.equals("echo")) {
-                    sb.setLength(0);
-                    sb.append("echo ");
-                    System.out.print("\r\033[2K$ ");
-                    System.out.print(sb);
-                    System.out.flush();
-                } else if (str.equals("ex") || str.equals("exi") || str.equals("exit")) { // else-if!
-                    sb.setLength(0);
-                    sb.append("exit ");
-                    System.out.print("\r\033[2K$ ");
-                    System.out.print(sb);
-                    System.out.flush();
-                } else {
-                    System.out.print("\007");
-                    System.out.flush();
-                }
-            } else if (c == 127 || c == 8) {
-                if (sb.length() > 0) {
-                    sb.deleteCharAt(sb.length() - 1);
-                    if (printOnEnter) {
-                        System.out.print("\b \b");
+                    } else if (ch == 127 || ch == '\b') {
+                        if (!sb.isEmpty()) {
+                            System.out.print("\b \b");
+                            sb.deleteCharAt(sb.length() - 1);
+                        }
+                    } else {
+                        sb.append((char) ch);
+                        System.out.print((char) ch);
                         System.out.flush();
                     }
                 }
-            } else {
-                sb.append(c);
-                if (printOnEnter) {
-                    System.out.print(c);
-                    System.out.flush();
+                String input = sb.toString();
+                boolean flag = false;
+                boolean error = false;
+                boolean append = false;
+                for (int i = 0; i < input.length(); i++) {
+                    if (input.charAt(i) == '>') {
+                        if (input.charAt(i - 1) == '2') {
+                            error = true;
+                            input = input.substring(0, i - 1) + input.substring(i);
+                        }
+                        flag = true;
+                        break;
+                    }
                 }
+                for (int i = 0; i < input.length(); i++) {
+                    if (input.charAt(i) == '>') {
+                        if (i + 1 < input.length() && input.charAt(i + 1) == '>') {
+                            append = true;
+                            input = input.substring(0, i) + input.substring(i + 1);
+                        }
+                        flag = true;
+                        break;
+                    }
+                }
+                if (flag) {
+                    redirect(input, error, append);
+                    System.out.print("$ ");
+                    continue;
+                }
+                if (input.split(" ")[0].equals("echo")) {
+                    System.out.println(print(input.substring(5)));
+                    System.out.print("$ ");
+                    continue;
+                }
+                if (input.split(" ")[0].equals("cat")) {
+                    String[] files = convert(input); // extracts only quoted filenames
+                    if (files.length > 0) {
+                        for (int i = 0; i < files.length; i++) {
+                            content(files[i]); // your existing helper
+                        }
+                    }
+                    System.out.print("$ ");
+                    continue;
+                }
+
+                if (input.charAt(0) == '\'') {
+                    int ind = 1;
+                    for (int i = 1; i < input.length(); i++) {
+                        if (input.charAt(i) == '\'') {
+                            ind = i;
+                            break;
+                        }
+                    }
+                    content(input.substring(ind + 2));
+                    System.out.print("$ ");
+                    continue;
+                }
+                if (input.charAt(0) == '"') {
+                    int ind = 1;
+                    for (int i = 1; i < input.length(); i++) {
+                        if (input.charAt(i) == '"') {
+                            ind = i;
+                            break;
+                        }
+                    }
+                    content(input.substring(ind + 2));
+                    System.out.print("$ ");
+                    continue;
+                }
+                if (input.split(" ")[0].equals("cd")) {
+                    String path = input.split(" ")[1];
+                    if (path.charAt(0) == '.') {
+                        change(path);
+                        System.out.print("$ ");
+                        continue;
+                    }
+                    if (path.charAt(0) == '~') {
+                        System.setProperty("user.dir", System.getenv("HOME"));
+                        System.out.print("$ ");
+                        continue;
+                    }
+                    path = exists(path);
+                    if (path != null) {
+                        System.setProperty("user.dir", path);
+                    } else {
+                        System.out.println(
+                                "cd: " + input.split(" ")[1] + ": No such file or directory");
+                    }
+                    System.out.print("$ ");
+                    continue;
+                }
+                if (input.equals("pwd")) {
+                    System.out.println(System.getProperty("user.dir"));
+                    System.out.print("$ ");
+                    continue;
+                }
+                if (input.split(" ")[0].equals("pwd")) {
+                    System.out.println(Path.of("").toAbsolutePath());
+                    System.out.print("$ ");
+                    continue;
+                }
+                if (check(input)) {
+                    Process process = Runtime.getRuntime().exec(input.split(" "));
+                    process.getInputStream().transferTo(System.out);
+                    System.out.print("$ ");
+                    continue;
+                }
+                String str1 = input.substring(0, 4);
+                if (str1.equals("type")) {
+                    String str = input.substring(5);
+                    if (str.equals("echo")
+                            || str.equals("exit")
+                            || str.equals("pwd")
+                            || str.equals("type")) {
+                        System.out.println(str + " is a shell builtin");
+                    } else {
+                        System.out.println(find(str));
+                    }
+                } else if (str1.equals("echo")) {
+                    System.out.println(input.substring(5));
+                } else if (str1.equals("exit")) {
+                    System.exit(0);
+                } else {
+                    System.out.println(input + ": not found");
+                }
+                System.out.print("$ ");
             }
-        }
-    }
-
-    static String saveTtyState() {
-        try {
-            Process p = new ProcessBuilder("/bin/sh", "-c", "stty -g </dev/tty")
-                    .redirectErrorStream(true).start();
-            byte[] out = p.getInputStream().readAllBytes();
-            p.waitFor();
-            return new String(out).trim();
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    static boolean setTerminalRawMode() {
-        try {
-            // try to disable echo
-            Process p1 = new ProcessBuilder("/bin/sh", "-c", "stty -echo -icanon min 1 time 0 </dev/tty").start();
-            if (p1.waitFor() != 0)
-                return false;
-
-            // verify echo is really off
-            Process p2 = new ProcessBuilder("/bin/sh", "-c", "stty -a </dev/tty").start();
-            String out = new String(p2.getInputStream().readAllBytes());
-            p2.waitFor();
-            // stty -a shows either "echo" or "-echo". We want -echo.
-            return out.contains("-echo");
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
-    static void restoreTtyState(String state) {
-        if (state == null || state.isEmpty())
-            return;
-        try {
-            new ProcessBuilder("/bin/sh", "-c", "stty " + state + " </dev/tty")
-                    .inheritIO().start().waitFor();
-        } catch (Exception ignored) {
         }
     }
 
