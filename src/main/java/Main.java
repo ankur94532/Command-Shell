@@ -246,9 +246,17 @@ public class Main {
 
     static boolean setTerminalRawMode() {
         try {
-            Process p = new ProcessBuilder("/bin/sh", "-c",
-                    "stty -echo -icanon min 1 time 0 </dev/tty").start();
-            return p.waitFor() == 0; // true = raw mode actually applied
+            // try to disable echo
+            Process p1 = new ProcessBuilder("/bin/sh", "-c", "stty -echo -icanon min 1 time 0 </dev/tty").start();
+            if (p1.waitFor() != 0)
+                return false;
+
+            // verify echo is really off
+            Process p2 = new ProcessBuilder("/bin/sh", "-c", "stty -a </dev/tty").start();
+            String out = new String(p2.getInputStream().readAllBytes());
+            p2.waitFor();
+            // stty -a shows either "echo" or "-echo". We want -echo.
+            return out.contains("-echo");
         } catch (Exception e) {
             return false;
         }
