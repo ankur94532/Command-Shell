@@ -18,8 +18,7 @@ public class Main {
         String saved = saveTtyState();
         while (true) {
             String input = "";
-            boolean echoKeys = shouldEchoPerChar();
-            if (echoKeys) {
+            if (System.console() == null) {
                 input = takeInput(setTerminalRawMode());
                 restoreTtyState(saved);
             } else {
