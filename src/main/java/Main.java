@@ -191,6 +191,10 @@ public class Main {
             char c = (char) r;
 
             if (c == '\n' || c == '\r') {
+                if (printOnEnter) {
+                    System.out.print("\r\n");
+                    System.out.flush();
+                }
                 return sb.toString();
             } else if (c == '\t') {
                 String str = sb.toString();
@@ -213,11 +217,17 @@ public class Main {
             } else if (c == 127 || c == 8) {
                 if (sb.length() > 0) {
                     sb.deleteCharAt(sb.length() - 1);
-                    System.out.print("\b \b");
-                    System.out.flush();
+                    if (printOnEnter) {
+                        System.out.print("\b \b");
+                        System.out.flush();
+                    }
                 }
             } else {
                 sb.append(c);
+                if (printOnEnter) {
+                    System.out.print(c);
+                    System.out.flush();
+                }
             }
         }
     }
