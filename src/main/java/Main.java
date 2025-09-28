@@ -44,6 +44,8 @@ public class Main {
                         } else if (str.equals("exi")) {
                             sb.append("t ");
                             System.out.print("t ");
+                        } else if (str.equals("custom")) {
+                            System.out.print("_executable");
                         } else {
                             System.out.print((char) 7);
                         }
