@@ -49,7 +49,7 @@ public class Main {
                             if (fileName == null) {
                                 System.out.print((char) 7);
                             } else {
-                                System.out.print(fileName.substring(str.length()));
+                                System.out.print(fileName.substring(str.length()) + " ");
                             }
                         }
                     } else if (ch == '\r' || ch == '\n') {
