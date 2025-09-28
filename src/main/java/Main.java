@@ -19,11 +19,11 @@ public class Main {
         processBuilder.directory(new File("").getCanonicalFile());
         Process rawMode = processBuilder.start();
         rawMode.waitFor();
+        System.out.print("$ ");
         try (InputStreamReader inputStreamReader = new InputStreamReader(System.in);
                 BufferedReader in = new BufferedReader(inputStreamReader)) {
             StringBuilder sb = new StringBuilder();
             while (true) {
-                System.out.print("$ ");
                 sb.setLength(0);
                 while (true) {
                     int ch = in.read();
