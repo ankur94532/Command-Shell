@@ -18,7 +18,7 @@ public class Main {
         String saved = saveTtyState();
         while (true) {
             String input = "";
-            if (System.console() == null) {
+            if (System.console() != null) {
                 input = takeInput(setTerminalRawMode());
                 restoreTtyState(saved);
             } else {
