@@ -408,6 +408,27 @@ public class Main {
         return s;
     }
 
+    static String fileOnTab(String str) {
+        String path = System.getenv("PATH");
+        if (path == null || path.isEmpty())
+            return str + ": not found";
+
+        for (String dir : path.split(File.pathSeparator)) {
+            File d = new File(dir);
+            if (!d.isDirectory())
+                continue;
+
+            File[] matches = d.listFiles(f -> f.isFile() && f.getName().startsWith(str) && f.canExecute());
+            if (matches == null || matches.length == 0)
+                continue;
+            Arrays.sort(matches, Comparator
+                    .comparingInt((File f) -> f.getName().equals(str) ? 0 : 1)
+                    .thenComparing(File::getName));
+            return matches[0].getName();
+        }
+        return str + ": not found";
+    }
+
     static String resolveOnPath(String name) {
         if (name.contains(java.io.File.separator))
             return new java.io.File(name).getPath();
