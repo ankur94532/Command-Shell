@@ -44,6 +44,8 @@ public class Main {
                         } else if (str.equals("exi")) {
                             sb.append("t ");
                             System.out.print("t ");
+                        } else {
+                            System.out.print((char) 7);
                         }
                     } else if (ch == '\r' || ch == '\n') {
                         System.out.println();
