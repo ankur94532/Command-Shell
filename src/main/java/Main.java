@@ -44,10 +44,13 @@ public class Main {
                         } else if (str.equals("exi")) {
                             sb.append("t ");
                             System.out.print("t ");
-                        } else if (str.equals("custom")) {
-                            System.out.print("_executable");
                         } else {
-                            System.out.print((char) 7);
+                            String fileName = fileOnTab(str);
+                            if (fileName == null) {
+                                System.out.print((char) 7);
+                            } else {
+                                System.out.print(fileName.substring(str.length()));
+                            }
                         }
                     } else if (ch == '\r' || ch == '\n') {
                         System.out.println();
@@ -411,7 +414,7 @@ public class Main {
     static String fileOnTab(String str) {
         String path = System.getenv("PATH");
         if (path == null || path.isEmpty())
-            return str + ": not found";
+            return null;
 
         for (String dir : path.split(File.pathSeparator)) {
             File d = new File(dir);
@@ -426,7 +429,7 @@ public class Main {
                     .thenComparing(File::getName));
             return matches[0].getName();
         }
-        return str + ": not found";
+        return null;
     }
 
     static String resolveOnPath(String name) {
