@@ -64,7 +64,12 @@ class Trie {
             int index = ch;
             current = current.children[index];
         }
-        return current.isEndOfWord==true;
+        for(int i=0;i<128;i++){
+            if(current.children[i]!=null){
+                return false;
+            }
+        }
+        return true;
     }
 }
 public class Main {
