@@ -42,6 +42,9 @@ class Trie {
         TrieNode current = root;
         for (char ch : word.toCharArray()) {
             int index = ch;
+            if(current.children[index]==null){
+                return "";
+            }
             current = current.children[index];
         }
         while(true){
@@ -119,6 +122,9 @@ public class Main {
                             String file=trie.search(str);
                             if(file.isEmpty()){
                                 List<String>files = fileOnTab(str);
+                                if(files.size()==0){
+                                    continue;
+                                }
                                 if(files.size()==1){
                                     sb.append(files.get(0).substring(str.length())+" ");
                                     System.out.print(files.get(0).substring(str.length())+" ");
