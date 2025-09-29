@@ -108,28 +108,31 @@ public class Main {
                             System.out.print("t ");
                         } else {
                             String file=trie.search(str);
+                            if(file.isEmpty()){
+                                List<String>files = fileOnTab(str);
+                                if(files.size()==1){
+                                    sb.append(files.get(0).substring(str.length())+" ");
+                                    System.out.print(files.get(0).substring(str.length())+" ");
+                                    continue;
+                                }
+                                if(!firstTab){
+                                    firstTab=true;
+                                    System.out.println((char) 7);
+                                    continue;
+                                }
+                                for(String file1:files){
+                                    System.out.print(file1+"  ");
+                                }
+                                System.out.println();
+                                System.out.print("$ "+sb.toString());
+                                continue;
+                            }
                             sb.append(file);
                             System.out.print(file);
                             if(trie.checkComplete(sb.toString())){
                                 System.out.print(" ");
                                 sb.append(" ");
                             }
-                            /*List<String>files = fileOnTab(str);
-                            if(files.size()==1){
-                                sb.append(files.get(0).substring(str.length())+" ");
-                                System.out.print(files.get(0).substring(str.length())+" ");
-                                continue;
-                            }
-                            if(!firstTab){
-                                firstTab=true;
-                                System.out.println((char) 7);
-                                continue;
-                            }
-                            for(String file:files){
-                                System.out.print(file+"  ");
-                            }
-                            System.out.println();
-                            System.out.print("$ "+sb.toString());*/
                         }
                     } else if (ch == '\r' || ch == '\n') {
                         System.out.println();
