@@ -48,6 +48,15 @@ class Trie {
             if(current.isEndOfWord){
                 break;
             }
+            int c=0;
+            for(int i=0;i<128;i++){
+                if(current.children[i]!=null){
+                    c++;
+                }
+            }
+            if(c>1){
+                return "";
+            }
             for(int i=0;i<128;i++){
                 if(current.children[i]!=null){
                     result.append((char)i);
