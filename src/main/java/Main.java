@@ -26,6 +26,7 @@ public class Main {
             while (true) {
                 sb.setLength(0);
                 while (true) {
+                    boolean firstTab=false;
                     int ch = in.read();
                     if (ch == '\t') {
                         String str = sb.toString();
@@ -45,12 +46,17 @@ public class Main {
                             sb.append("t ");
                             System.out.print("t ");
                         } else {
-                            String fileName = fileOnTab(str);
-                            if (fileName == null) {
+                            if(!firstTab){
                                 System.out.print((char) 7);
-                            } else {
-                                System.out.print(fileName.substring(str.length()) + " ");
+                                firstTab=true;
+                                continue;
                             }
+                            List<String>files = fileOnTab(str);
+                            for(String file:files){
+                                System.out.print(file+"  ");
+                            }
+                            System.out.println();
+                            System.out.print("$ "+sb.toString());
                         }
                     } else if (ch == '\r' || ch == '\n') {
                         System.out.println();
@@ -411,7 +417,8 @@ public class Main {
         return s;
     }
 
-    static String fileOnTab(String str) {
+    static List<String> fileOnTab(String str) {
+        List<String>files=new ArrayList<>();
         String path = System.getenv("PATH");
         if (path == null || path.isEmpty())
             return null;
@@ -424,12 +431,11 @@ public class Main {
             File[] matches = d.listFiles(f -> f.isFile() && f.getName().startsWith(str) && f.canExecute());
             if (matches == null || matches.length == 0)
                 continue;
-            Arrays.sort(matches, Comparator
-                    .comparingInt((File f) -> f.getName().equals(str) ? 0 : 1)
-                    .thenComparing(File::getName));
-            return matches[0].getName();
+            for(File file:matches){
+                files.add(file.getName());
+            }
         }
-        return null;
+        return files;
     }
 
     static String resolveOnPath(String name) {
