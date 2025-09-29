@@ -26,7 +26,6 @@ public class Main {
             while (true) {
                 sb.setLength(0);
                 while (true) {
-                    boolean firstTab=false;
                     int ch = in.read();
                     if (ch == '\t') {
                         String str = sb.toString();
@@ -46,11 +45,7 @@ public class Main {
                             sb.append("t ");
                             System.out.print("t ");
                         } else {
-                            if(!firstTab){
-                                System.out.print((char) 7);
-                                firstTab=true;
-                                continue;
-                            }
+                            System.out.print((char) 7);
                             System.out.println("hi "+str);
                             List<String>files = fileOnTab(str);
                             for(String file:files){
