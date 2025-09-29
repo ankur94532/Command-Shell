@@ -24,6 +24,7 @@ public class Main {
                 BufferedReader in = new BufferedReader(inputStreamReader)) {
             StringBuilder sb = new StringBuilder();
             while (true) {
+                boolean firstTab=false;
                 sb.setLength(0);
                 while (true) {
                     int ch = in.read();
@@ -45,7 +46,12 @@ public class Main {
                             sb.append("t ");
                             System.out.print("t ");
                         } else {
+                            if(firstTab){
+                                continue;
+                            }
+                            firstTab=true;
                             System.out.print((char) 7);
+                            System.out.println("$ "+sb.toString());
                             List<String>files = fileOnTab(str);
                             for(String file:files){
                                 System.out.print(file+"  ");
