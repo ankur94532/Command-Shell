@@ -46,11 +46,11 @@ public class Main {
                             sb.append("t ");
                             System.out.print("t ");
                         } else {
-                            if(firstTab){
+                            if(!firstTab){
+                                firstTab=true;
+                                System.out.print((char) 7);
                                 continue;
                             }
-                            firstTab=true;
-                            System.out.print((char) 7);
                             List<String>files = fileOnTab(str);
                             for(String file:files){
                                 System.out.print(file+"  ");
