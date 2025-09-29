@@ -645,17 +645,13 @@ public class Main {
     }
 
     static File resolvePath(String name) {
-        if (name.contains(java.io.File.separator))
-            return new java.io.File(name);
         String path = System.getenv("PATH");
-        if (path == null)
-            return null;
         for (String dir : path.split(java.io.File.pathSeparator)) {
             java.io.File f = new java.io.File(dir, name);
             if (f.isFile() && f.canExecute())
                 return f;
         }
-        return null;
+        return new java.io.File(name);
     }
 
     static String[] convert(String input) {
