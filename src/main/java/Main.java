@@ -308,10 +308,9 @@ public class Main {
                 ind = i;
             }
         }
-        File file = resolvePath(inputs[ind - 1]);
         List<String> leftCmd = new ArrayList<>();
         List<String> rightCmd = new ArrayList<>();
-        for (int i = 0; i < ind - 1; i++) {
+        for (int i = 0; i < ind; i++) {
             leftCmd.add(inputs[i]);
         }
         for (int i = ind + 1; i < inputs.length; i++) {
@@ -319,7 +318,7 @@ public class Main {
         }
         System.out.println(leftCmd);
         System.out.println(rightCmd);
-        startPipe(leftCmd, rightCmd, file);
+        startPipe(leftCmd, rightCmd, new File(System.getProperty("user.dir")));
     }
 
     static int startPipe(List<String> leftCmd, List<String> rightCmd, File file)
@@ -642,16 +641,6 @@ public class Main {
                 return f.getAbsolutePath();
         }
         return null;
-    }
-
-    static File resolvePath(String name) {
-        String path = System.getenv("PATH");
-        for (String dir : path.split(java.io.File.pathSeparator)) {
-            java.io.File f = new java.io.File(dir, name);
-            if (f.isFile() && f.canExecute())
-                return f;
-        }
-        return new java.io.File(name);
     }
 
     static String[] convert(String input) {
