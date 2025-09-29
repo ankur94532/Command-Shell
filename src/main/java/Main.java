@@ -29,6 +29,7 @@ public class Main {
                 while (true) {
                     int ch = in.read();
                     if (ch == '\t') {
+                        System.out.println("hi");
                         String str = sb.toString();
                         if (str.equals("e")) {
                             sb.append("cho ");
