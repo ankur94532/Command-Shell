@@ -57,7 +57,6 @@ public class Main {
                                 System.out.println((char) 7);
                                 continue;
                             }
-                            List<String>files = fileOnTab(str);
                             for(String file:files){
                                 System.out.print(file+"  ");
                             }
