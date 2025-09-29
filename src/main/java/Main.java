@@ -46,7 +46,6 @@ public class Main {
                             System.out.print("t ");
                         } else {
                             System.out.print((char) 7);
-                            System.out.println("hi "+str);
                             List<String>files = fileOnTab(str);
                             for(String file:files){
                                 System.out.print(file+"  ");
