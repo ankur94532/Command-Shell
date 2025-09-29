@@ -29,7 +29,6 @@ public class Main {
                 while (true) {
                     int ch = in.read();
                     if (ch == '\t') {
-                        System.out.println("hi");
                         String str = sb.toString();
                         if (str.equals("e")) {
                             sb.append("cho ");
@@ -49,7 +48,7 @@ public class Main {
                         } else {
                             if(!firstTab){
                                 firstTab=true;
-                                System.out.print((char) 7);
+                                System.out.println((char) 7);
                                 continue;
                             }
                             List<String>files = fileOnTab(str);
