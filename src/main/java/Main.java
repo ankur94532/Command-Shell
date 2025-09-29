@@ -317,6 +317,8 @@ public class Main {
         for (int i = ind + 1; i < inputs.length; i++) {
             rightCmd.add(inputs[i]);
         }
+        System.out.println(leftCmd);
+        System.out.println(rightCmd);
         startPipe(leftCmd, rightCmd, file);
     }
 
