@@ -435,6 +435,7 @@ public class Main {
                 files.add(file.getName());
             }
         }
+        Collections.sort(files);
         return files;
     }
 
