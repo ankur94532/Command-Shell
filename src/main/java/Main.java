@@ -92,11 +92,11 @@ public class Main {
         processBuilder.directory(new File("").getCanonicalFile());
         Process rawMode = processBuilder.start();
         rawMode.waitFor();
+        System.out.print("$ ");
         try (InputStreamReader inputStreamReader = new InputStreamReader(System.in);
                 BufferedReader in = new BufferedReader(inputStreamReader)) {
             StringBuilder sb = new StringBuilder();
             while (true) {
-                System.out.print("$ ");
                 Trie trie = new Trie();
                 addToTrie(trie);
                 boolean firstTab = false;
@@ -317,6 +317,7 @@ public class Main {
             rightCmd.add(inputs[i]);
         }
         startPipe(leftCmd, rightCmd, new File(System.getProperty("user.dir")));
+        System.out.print("$ ");
     }
 
     static int startPipe(List<String> leftCmd, List<String> rightCmd, File file)
