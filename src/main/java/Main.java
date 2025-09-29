@@ -46,6 +46,12 @@ public class Main {
                             sb.append("t ");
                             System.out.print("t ");
                         } else {
+                            List<String>files = fileOnTab(str);
+                            if(files.size()==1){
+                                sb.append(files.get(0).substring(str.length()));
+                                System.out.print(files.get(0).substring(str.length()));
+                                continue;
+                            }
                             if(!firstTab){
                                 firstTab=true;
                                 System.out.println((char) 7);
