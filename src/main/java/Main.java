@@ -97,7 +97,6 @@ public class Main {
                 BufferedReader in = new BufferedReader(inputStreamReader)) {
             StringBuilder sb = new StringBuilder();
             while (true) {
-                System.out.println(System.getenv("PATH"));
                 Trie trie = new Trie();
                 addToTrie(trie);
                 boolean firstTab = false;
