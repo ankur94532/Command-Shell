@@ -12,7 +12,53 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+class TrieNode {
+    TrieNode[] children = new TrieNode[128]; // For lowercase English letters
+    boolean isEndOfWord = false; // Marks the end of a word
+}
+class Trie {
+    private final TrieNode root;
 
+    public Trie() {
+        root = new TrieNode();
+    }
+
+    // Insert a word into the Trie
+    public void insert(String word) {
+        TrieNode current = root;
+        for (char ch : word.toCharArray()) {
+            int index = ch;
+            if (current.children[index] == null) {
+                current.children[index] = new TrieNode();
+            }
+            current = current.children[index];
+        }
+        current.isEndOfWord = true;
+    }
+
+    // Search for a word in the Trie
+    public String search(String word) {
+        StringBuilder result=new StringBuilder();
+        TrieNode current = root;
+        for (char ch : word.toCharArray()) {
+            int index = ch;
+            current = current.children[index];
+        }
+        while(true){
+            if(current.isEndOfWord){
+                break;
+            }
+            for(int i=0;i<128;i++){
+                if(current.children[i]!=null){
+                    result.append((char)i);
+                    current=current.children[i];
+                    break;
+                }
+            }
+        }
+        return result.toString();
+    }
+}
 public class Main {
     public static void main(String[] args) throws Exception {
         ProcessBuilder processBuilder = new ProcessBuilder("/bin/sh", "-c", "stty -echo -icanon min 1 < /dev/tty");
@@ -24,6 +70,8 @@ public class Main {
                 BufferedReader in = new BufferedReader(inputStreamReader)) {
             StringBuilder sb = new StringBuilder();
             while (true) {
+                Trie trie=new Trie();
+                addToTrie(trie);
                 boolean firstTab=false;
                 sb.setLength(0);
                 while (true) {
@@ -46,7 +94,10 @@ public class Main {
                             sb.append("t ");
                             System.out.print("t ");
                         } else {
-                            List<String>files = fileOnTab(str);
+                            String file=trie.search(str);
+                            sb.append(file);
+                            System.out.print(file);
+                            /*List<String>files = fileOnTab(str);
                             if(files.size()==1){
                                 sb.append(files.get(0).substring(str.length())+" ");
                                 System.out.print(files.get(0).substring(str.length())+" ");
@@ -61,7 +112,7 @@ public class Main {
                                 System.out.print(file+"  ");
                             }
                             System.out.println();
-                            System.out.print("$ "+sb.toString());
+                            System.out.print("$ "+sb.toString());*/
                         }
                     } else if (ch == '\r' || ch == '\n') {
                         System.out.println();
@@ -206,7 +257,21 @@ public class Main {
             }
         }
     }
+    static void addToTrie(Trie trie){
+        String path = System.getenv("PATH");
+        for (String dir : path.split(File.pathSeparator)) {
+            File d = new File(dir);
+            if (!d.isDirectory())
+                continue;
 
+            File[] matches = d.listFiles(f -> f.isFile() && f.canExecute());
+            if (matches == null || matches.length == 0)
+                continue;
+            for(File file:matches){
+                trie.insert(file.getName());
+            }
+        }
+    }
     static void redirect(String input, boolean error, boolean append) throws IOException, InterruptedException {
         String[] inputs = input.split(" ");
         if (inputs[0].equals("echo")) {
