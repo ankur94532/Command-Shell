@@ -49,6 +49,7 @@ public class Main {
                             if(!firstTab){
                                 firstTab=true;
                                 System.out.print((char) 7);
+                                System.out.println("$ "+sb.toString());
                                 continue;
                             }
                             List<String>files = fileOnTab(str);
