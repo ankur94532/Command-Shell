@@ -1,11 +1,14 @@
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.util.*;
 import java.io.BufferedReader;
+import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Path;
 
 class TrieNode {
@@ -165,6 +168,10 @@ public class Main {
                     }
                 }
                 String input = sb.toString();
+                if (input.contains(" | ")) {
+                    usePipe(input);
+                    continue;
+                }
                 boolean flag = false;
                 boolean error = false;
                 boolean append = false;
@@ -291,6 +298,81 @@ public class Main {
                 }
                 System.out.print("$ ");
             }
+        }
+    }
+
+    static void usePipe(String input) throws IOException, InterruptedException {
+        String[] inputs = input.split(" ");
+        int ind = -1;
+        for (int i = 0; i < inputs.length; i++) {
+            if (inputs[i].equals("|")) {
+                ind = i;
+            }
+        }
+        File file = resolvePath(inputs[ind - 1]);
+        List<String> leftCmd = new ArrayList<>();
+        List<String> rightCmd = new ArrayList<>();
+        for (int i = 0; i < ind - 1; i++) {
+            leftCmd.add(inputs[i]);
+        }
+        for (int i = ind + 1; i < inputs.length; i++) {
+            rightCmd.add(inputs[i]);
+        }
+        startPipe(leftCmd, rightCmd, file);
+    }
+
+    static int startPipe(List<String> leftCmd, List<String> rightCmd, File file)
+            throws IOException, InterruptedException {
+        ProcessBuilder leftPB = new ProcessBuilder(leftCmd).directory(file);
+        ProcessBuilder rightPB = new ProcessBuilder(rightCmd).directory(file);
+        Process left = leftPB.start();
+        Process right = rightPB.start();
+        closeQuietly(left.getOutputStream());
+        Thread tPipe = pump(left.getInputStream(), right.getOutputStream(), true);
+        Thread leftError = pump(left.getErrorStream(), System.err, false);
+        Thread rightError = pump(right.getErrorStream(), System.err, false);
+        Thread rightOutput = pump(right.getInputStream(), System.out, false);
+        tPipe.join();
+        leftError.join();
+        rightError.join();
+        rightOutput.join();
+        int leftExit = left.waitFor();
+        int rightExit = right.waitFor();
+        if (rightExit != 0) {
+            return rightExit;
+        }
+        return leftExit;
+    }
+
+    static Thread pump(InputStream in, OutputStream out, boolean closeDest) {
+        Thread t = new Thread(() -> {
+            final byte[] buf = new byte[8192];
+            try {
+                int n;
+                while ((n = in.read(buf)) != -1) {
+                    out.write(buf, 0, n);
+                    out.flush();
+                }
+            } catch (IOException ignored) {
+
+            } finally {
+                if (closeDest) {
+                    closeQuietly(out);
+                }
+                closeQuietly(in);
+            }
+        });
+        t.setDaemon(true);
+        t.start();
+        return t;
+    }
+
+    static void closeQuietly(Closeable c) {
+        try {
+            if (c != null) {
+                c.close();
+            }
+        } catch (IOException ignored) {
         }
     }
 
@@ -549,7 +631,7 @@ public class Main {
 
     static String resolveOnPath(String name) {
         if (name.contains(java.io.File.separator))
-            return new java.io.File(name).getPath();
+            return new java.io.File(name).getAbsolutePath();
         String path = System.getenv("PATH");
         if (path == null)
             return null;
@@ -557,6 +639,20 @@ public class Main {
             java.io.File f = new java.io.File(dir, name);
             if (f.isFile() && f.canExecute())
                 return f.getAbsolutePath();
+        }
+        return null;
+    }
+
+    static File resolvePath(String name) {
+        if (name.contains(java.io.File.separator))
+            return new java.io.File(name);
+        String path = System.getenv("PATH");
+        if (path == null)
+            return null;
+        for (String dir : path.split(java.io.File.pathSeparator)) {
+            java.io.File f = new java.io.File(dir, name);
+            if (f.isFile() && f.canExecute())
+                return f;
         }
         return null;
     }
