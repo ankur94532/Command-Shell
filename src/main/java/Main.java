@@ -51,6 +51,7 @@ public class Main {
                                 firstTab=true;
                                 continue;
                             }
+                            System.out.println("hi "+str);
                             List<String>files = fileOnTab(str);
                             for(String file:files){
                                 System.out.print(file+"  ");
