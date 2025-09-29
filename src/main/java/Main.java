@@ -123,6 +123,7 @@ public class Main {
                             if(file.isEmpty()){
                                 List<String>files = fileOnTab(str);
                                 if(files.size()==0){
+                                    System.out.println((char) 7);
                                     continue;
                                 }
                                 if(files.size()==1){
