@@ -1,6 +1,4 @@
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
@@ -8,14 +6,13 @@ import java.util.*;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
+
 class TrieNode {
     TrieNode[] children = new TrieNode[128]; // For lowercase English letters
     boolean isEndOfWord = false; // Marks the end of a word
 }
+
 class Trie {
     private final TrieNode root;
 
@@ -38,52 +35,54 @@ class Trie {
 
     // Search for a word in the Trie
     public String search(String word) {
-        StringBuilder result=new StringBuilder();
+        StringBuilder result = new StringBuilder();
         TrieNode current = root;
         for (char ch : word.toCharArray()) {
             int index = ch;
-            if(current.children[index]==null){
+            if (current.children[index] == null) {
                 return "";
             }
             current = current.children[index];
         }
-        while(true){
-            if(current.isEndOfWord){
+        while (true) {
+            if (current.isEndOfWord) {
                 break;
             }
-            int c=0;
-            for(int i=0;i<128;i++){
-                if(current.children[i]!=null){
+            int c = 0;
+            for (int i = 0; i < 128; i++) {
+                if (current.children[i] != null) {
                     c++;
                 }
             }
-            if(c>1){
+            if (c > 1) {
                 return "";
             }
-            for(int i=0;i<128;i++){
-                if(current.children[i]!=null){
-                    result.append((char)i);
-                    current=current.children[i];
+            for (int i = 0; i < 128; i++) {
+                if (current.children[i] != null) {
+                    result.append((char) i);
+                    current = current.children[i];
                     break;
                 }
             }
         }
         return result.toString();
     }
-    public boolean checkComplete(String word){
+
+    public boolean checkComplete(String word) {
         TrieNode current = root;
         for (char ch : word.toCharArray()) {
             int index = ch;
             current = current.children[index];
         }
-        for(int i=0;i<128;i++){
-            if(current.children[i]!=null){
+        for (int i = 0; i < 128; i++) {
+            if (current.children[i] != null) {
                 return false;
             }
         }
         return true;
     }
 }
+
 public class Main {
     public static void main(String[] args) throws Exception {
         ProcessBuilder processBuilder = new ProcessBuilder("/bin/sh", "-c", "stty -echo -icanon min 1 < /dev/tty");
@@ -95,9 +94,10 @@ public class Main {
                 BufferedReader in = new BufferedReader(inputStreamReader)) {
             StringBuilder sb = new StringBuilder();
             while (true) {
-                Trie trie=new Trie();
+                System.out.println(System.getenv("PATH"));
+                Trie trie = new Trie();
                 addToTrie(trie);
-                boolean firstTab=false;
+                boolean firstTab = false;
                 sb.setLength(0);
                 while (true) {
                     int ch = in.read();
@@ -119,33 +119,33 @@ public class Main {
                             sb.append("t ");
                             System.out.print("t ");
                         } else {
-                            String file=trie.search(str);
-                            if(file.isEmpty()){
-                                List<String>files = fileOnTab(str);
-                                if(files.size()==0){
+                            String file = trie.search(str);
+                            if (file.isEmpty()) {
+                                List<String> files = fileOnTab(str);
+                                if (files.size() == 0) {
                                     System.out.println((char) 7);
                                     continue;
                                 }
-                                if(files.size()==1){
-                                    sb.append(files.get(0).substring(str.length())+" ");
-                                    System.out.print(files.get(0).substring(str.length())+" ");
+                                if (files.size() == 1) {
+                                    sb.append(files.get(0).substring(str.length()) + " ");
+                                    System.out.print(files.get(0).substring(str.length()) + " ");
                                     continue;
                                 }
-                                if(!firstTab){
-                                    firstTab=true;
+                                if (!firstTab) {
+                                    firstTab = true;
                                     System.out.println((char) 7);
                                     continue;
                                 }
-                                for(String file1:files){
-                                    System.out.print(file1+"  ");
+                                for (String file1 : files) {
+                                    System.out.print(file1 + "  ");
                                 }
                                 System.out.println();
-                                System.out.print("$ "+sb.toString());
+                                System.out.print("$ " + sb.toString());
                                 continue;
                             }
                             sb.append(file);
                             System.out.print(file);
-                            if(trie.checkComplete(sb.toString())){
+                            if (trie.checkComplete(sb.toString())) {
                                 System.out.print(" ");
                                 sb.append(" ");
                             }
@@ -293,7 +293,8 @@ public class Main {
             }
         }
     }
-    static void addToTrie(Trie trie){
+
+    static void addToTrie(Trie trie) {
         String path = System.getenv("PATH");
         for (String dir : path.split(File.pathSeparator)) {
             File d = new File(dir);
@@ -303,11 +304,12 @@ public class Main {
             File[] matches = d.listFiles(f -> f.isFile() && f.canExecute());
             if (matches == null || matches.length == 0)
                 continue;
-            for(File file:matches){
+            for (File file : matches) {
                 trie.insert(file.getName());
             }
         }
     }
+
     static void redirect(String input, boolean error, boolean append) throws IOException, InterruptedException {
         String[] inputs = input.split(" ");
         if (inputs[0].equals("echo")) {
@@ -524,7 +526,7 @@ public class Main {
     }
 
     static List<String> fileOnTab(String str) {
-        List<String>files=new ArrayList<>();
+        List<String> files = new ArrayList<>();
         String path = System.getenv("PATH");
         if (path == null || path.isEmpty())
             return null;
@@ -537,7 +539,7 @@ public class Main {
             File[] matches = d.listFiles(f -> f.isFile() && f.getName().startsWith(str) && f.canExecute());
             if (matches == null || matches.length == 0)
                 continue;
-            for(File file:matches){
+            for (File file : matches) {
                 files.add(file.getName());
             }
         }
