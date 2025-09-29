@@ -58,6 +58,14 @@ class Trie {
         }
         return result.toString();
     }
+    public boolean checkComplete(String word){
+        TrieNode current = root;
+        for (char ch : word.toCharArray()) {
+            int index = ch;
+            current = current.children[index];
+        }
+        return current.isEndOfWord==true;
+    }
 }
 public class Main {
     public static void main(String[] args) throws Exception {
@@ -97,6 +105,10 @@ public class Main {
                             String file=trie.search(str);
                             sb.append(file);
                             System.out.print(file);
+                            if(trie.checkComplete(sb.toString())){
+                                System.out.print(" ");
+                                sb.append(" ");
+                            }
                             /*List<String>files = fileOnTab(str);
                             if(files.size()==1){
                                 sb.append(files.get(0).substring(str.length())+" ");
