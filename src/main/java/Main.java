@@ -431,18 +431,18 @@ public class Main {
                 while (true) {
                     int ch = readKey(pin);
                     if (ch == KEY_UP) {
-                        sb.setLength(0);
-                        sb.append(commands.get(commands.size() - 1));
                         dq.offerFirst(commands.get(commands.size() - 1));
                         commands.removeLast();
+                        sb.setLength(0);
+                        sb.append(dq.peekFirst());
                         System.out.print("\r\u001B[2K");
                         System.out.print("$ " + sb.toString());
                         continue;
                     } else if (ch == KEY_DOWN) {
-                        sb.setLength(0);
-                        sb.append(dq.peekFirst());
                         commands.add(dq.peekFirst());
                         dq.pollFirst();
+                        sb.setLength(0);
+                        sb.append(dq.peekFirst());
                         System.out.print("\r\u001B[2K");
                         System.out.print("$ " + sb.toString());
                         continue;
