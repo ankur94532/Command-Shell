@@ -519,7 +519,7 @@ public class Main {
                 }
                 if (input.startsWith("history")) {
                     String[] inputs = input.split(" ");
-                    if (inputs[1].equals("-r")) {
+                    if (inputs.length > 1 && inputs[1].equals("-r")) {
                         try (BufferedReader br = Files.newBufferedReader(getPath(inputs[2]),
                                 StandardCharsets.UTF_8)) {
                             String line;
@@ -527,6 +527,8 @@ public class Main {
                                 commands.add(line);
                             }
                         }
+                        System.out.print("$ ");
+                        continue;
                     }
                     for (int i = commands.size() - Integer.parseInt(inputs[1]); i < commands.size(); i++) {
                         System.out.println(i + 1 + " " + commands.get(i));
