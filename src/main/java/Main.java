@@ -697,6 +697,13 @@ public class Main {
                 } else if (str1.equals("echo")) {
                     System.out.println(input.substring(5));
                 } else if (str1.equals("exit")) {
+                    if (System.getenv().containsKey("HISTFILE")) {
+                        StringBuilder write = new StringBuilder();
+                        for (String command : commands) {
+                            write.append(command + "\n");
+                        }
+                        Files.writeString(getPath(System.getenv("HISTFILE")), write.toString(), StandardCharsets.UTF_8);
+                    }
                     System.exit(0);
                 } else {
                     System.out.println(input + ": not found");
