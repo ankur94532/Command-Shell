@@ -416,12 +416,20 @@ public class Main {
             Process rawMode = processBuilder.start();
             rawMode.waitFor();
         }
-
         System.out.print("$ ");
         Builtins sharedBuiltins = new Builtins();
         List<String> commands = new ArrayList<>();
         Deque<String> dq = new ArrayDeque<>();
         HashMap<Path, Integer> tracker = new HashMap<>();
+        try (BufferedReader br = Files.newBufferedReader(getPath(System.getenv("HISTFILE")),
+                StandardCharsets.UTF_8)) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                if (!line.isEmpty()) {
+                    commands.add(line);
+                }
+            }
+        }
         try (java.io.PushbackInputStream pin = new java.io.PushbackInputStream(System.in, 8);) {
             StringBuilder sb = new StringBuilder();
             while (true) {
