@@ -152,7 +152,8 @@ final class Builtins {
     }
 
     private static boolean isBuiltin(String s) {
-        return s.equals("echo") || s.equals("exit") || s.equals("pwd") || s.equals("type") || s.equals("cd");
+        return s.equals("echo") || s.equals("exit") || s.equals("pwd") || s.equals("type") || s.equals("cd")
+                || s.equals("history");
     }
 
     int runBuiltin(String name, List<String> args,
@@ -442,8 +443,6 @@ public class Main {
                 }
 
                 String input = sb.toString();
-
-                // PIPELINE: detect robustly (handles ls|wc -l)
                 if (splitPipeline(input).size() > 1) {
                     usePipe(input, sharedBuiltins);
                     System.out.print("$ ");
@@ -546,14 +545,11 @@ public class Main {
                     System.out.print("$ ");
                     continue;
                 }
-
-                // External command (non-pipe): use ProcessBuilder + tokenization, honor cwd
                 if (check(input)) {
                     List<String> argv = tokenizeArgs(input);
                     ProcessBuilder pb = new ProcessBuilder(argv);
                     pb.directory(new File(System.getProperty("user.dir")));
                     Process process = pb.start();
-                    // stream stdout (simple)
                     process.getInputStream().transferTo(System.out);
                     System.out.print("$ ");
                     continue;
@@ -562,7 +558,8 @@ public class Main {
                 String str1 = input.length() >= 4 ? input.substring(0, 4) : input;
                 if (str1.equals("type")) {
                     String str = input.length() > 5 ? input.substring(5) : "";
-                    if (str.equals("echo") || str.equals("exit") || str.equals("pwd") || str.equals("type")) {
+                    if (str.equals("echo") || str.equals("exit") || str.equals("pwd") || str.equals("type") ||
+                            str.equals("history")) {
                         System.out.println(str + " is a shell builtin");
                     } else {
                         System.out.println(find(str));
@@ -578,8 +575,6 @@ public class Main {
             }
         }
     }
-
-    // ----- Pipeline -----
 
     static void usePipe(String input, Builtins sharedBuiltins) throws Exception {
         List<List<String>> segments = splitPipeline(input);
@@ -660,7 +655,6 @@ public class Main {
         }
     }
 
-    // Robust splitter: handles no-space pipes and quoted args
     static List<List<String>> splitPipeline(String s) {
         ArrayList<List<String>> out = new ArrayList<>();
         ArrayList<String> cur = new ArrayList<>();
@@ -712,8 +706,6 @@ public class Main {
             tok.setLength(0);
         }
     }
-
-    // ----- Misc helpers you had -----
 
     static void addToTrie(Trie trie) {
         String path = System.getenv("PATH");
