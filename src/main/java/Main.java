@@ -429,7 +429,7 @@ public class Main {
                 sb.setLength(0);
                 while (true) {
                     int ch = readKey(pin);
-                    if (ch == -1001) {
+                    if (ch == KEY_UP) {
                         sb.setLength(0);
                         sb.append(commands.get(commands.size() - 1));
                         System.out.print("\r\u001B[2K");
@@ -485,10 +485,10 @@ public class Main {
                                 sb.append(" ");
                             }
                         }
-                    } else if (ch == '\r' || ch == '\n') {
+                    } else if (ch == KEY_ENTER) {
                         System.out.println();
                         break;
-                    } else if (ch == 127 || ch == '\b') {
+                    } else if (ch == KEY_BACKSPACE) {
                         if (!sb.isEmpty()) {
                             System.out.print("\b \b");
                             sb.deleteCharAt(sb.length() - 1);
