@@ -358,57 +358,6 @@ class Trie {
 }
 
 public class Main {
-    static final int KEY_UP = -1001;
-    static final int KEY_DOWN = -1002;
-    static final int KEY_RIGHT = -1003;
-    static final int KEY_LEFT = -1004;
-    static final int KEY_ENTER = -1005;
-    static final int KEY_BACKSPACE = -1006;
-
-    static int readKey(java.io.PushbackInputStream in) throws java.io.IOException {
-        int b = in.read();
-        if (b == -1)
-            return -1;
-
-        if (b == 0x1B) {
-            int b1 = in.read();
-            if (b1 == -1)
-                return 0x1B;
-            if (b1 == '[' || b1 == 'O') {
-                int b2 = in.read();
-                if (b2 == -1)
-                    return 0x1B;
-                switch (b2) {
-                    case 'A':
-                        return KEY_UP;
-                    case 'B':
-                        return KEY_DOWN;
-                    case 'C':
-                        return KEY_RIGHT;
-                    case 'D':
-                        return KEY_LEFT;
-                    default:
-                        if (Character.isDigit(b2)) {
-                            int x;
-                            while ((x = in.read()) != -1 && Character.isDigit(x)) {
-                            }
-                            if (x != '~' && x != -1)
-                                in.unread(x);
-                        }
-                        return 0x1B;
-                }
-            } else {
-                in.unread(b1);
-                return 0x1B;
-            }
-        } else if (b == 127) {
-            return KEY_BACKSPACE;
-        } else if (b == '\r' || b == '\n') {
-            return KEY_ENTER;
-        }
-        return b;
-    }
-
     public static void main(String[] args) throws Exception {
         if (System.console() != null) {
             ProcessBuilder processBuilder = new ProcessBuilder("/bin/sh", "-c", "stty -echo -icanon min 1 < /dev/tty");
@@ -428,7 +377,7 @@ public class Main {
                 boolean firstTab = false;
                 sb.setLength(0);
                 while (true) {
-                    int ch = readKey(pin);
+                    int ch = pin.read();
                     if (ch == -1005) {
                         if (sb.length() > 0) {
                             commands.add(sb.toString());
@@ -504,7 +453,7 @@ public class Main {
                         System.out.flush();
                     }
                 }
-
+                System.out.println("here");
                 String input = sb.toString();
                 commands.add(input);
                 if (input.equals("history")) {
