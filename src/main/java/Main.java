@@ -434,9 +434,9 @@ public class Main {
                             commands.add(sb.toString());
                             sb.setLength(0);
                         }
-                        commands.removeLast();
                         System.out.print("\r\u001B[2K");
                         System.out.print("$ " + commands.get(commands.size() - 1));
+                        commands.removeLast();
                         continue;
                     }
                     if (commands.size() > 0) {
