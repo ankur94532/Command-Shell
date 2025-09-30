@@ -451,6 +451,14 @@ public class Main {
                     System.out.print("$ ");
                     continue;
                 }
+                if (input.startsWith("history")) {
+                    String[] inputs = input.split(" ");
+                    for (int i = commands.size() - Integer.parseInt(inputs[1]); i < commands.size(); i++) {
+                        System.out.println(i + 1 + " " + commands.get(i));
+                    }
+                    System.out.print("$ ");
+                    continue;
+                }
                 if (splitPipeline(input).size() > 1) {
                     usePipe(input, sharedBuiltins);
                     System.out.print("$ ");
