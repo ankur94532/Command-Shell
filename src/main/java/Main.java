@@ -431,6 +431,7 @@ public class Main {
                 while (true) {
                     int ch = readKey(pin);
                     if (ch == KEY_UP) {
+                        System.out.println("hey");
                         if (sb.length() > 0) {
                             commands.add(sb.toString());
                             sb.setLength(0);
