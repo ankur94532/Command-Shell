@@ -432,15 +432,9 @@ public class Main {
                     int ch = readKey(pin);
                     if (ch == KEY_UP) {
                         sb.setLength(0);
-                        if (dq.size() > 0) {
-                            sb.append(dq.peekFirst());
-                            commands.add(dq.peekFirst());
-                            dq.pollFirst();
-                        } else {
-                            sb.append(commands.get(commands.size() - 1));
-                            dq.offerFirst(commands.get(commands.size() - 1));
-                            commands.removeLast();
-                        }
+                        sb.append(commands.get(commands.size() - 1));
+                        dq.offerFirst(commands.get(commands.size() - 1));
+                        commands.removeLast();
                         System.out.print("\r\u001B[2K");
                         System.out.print("$ " + sb.toString());
                         continue;
