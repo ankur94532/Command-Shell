@@ -505,6 +505,7 @@ public class Main {
                 }
 
                 if (input.split(" ")[0].equals("echo")) {
+                    System.out.println("hlo");
                     System.out.println(print(input.substring(5)));
                     System.out.print("$ ");
                     continue;
