@@ -386,9 +386,6 @@ public class Main {
                         commands.removeLast();
                         continue;
                     }
-                    if (commands.size() > 0) {
-                        sb.append(commands.get(commands.size() - 1));
-                    }
                     if (ch == '\t') {
                         String str = sb.toString();
                         if (str.equals("e")) {
