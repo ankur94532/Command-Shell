@@ -431,7 +431,6 @@ public class Main {
                 while (true) {
                     int ch = readKey(pin);
                     if (ch == -1005) {
-                        System.out.println("hey" + sb.toString());
                         if (sb.length() > 0) {
                             commands.add(sb.toString());
                             sb.setLength(0);
@@ -439,6 +438,7 @@ public class Main {
                         history.offerFirst(commands.get(commands.size() - 1));
                         commands.removeLast();
                         System.out.print("\r\u001B[2K");
+                        System.out.print("cool");
                         System.out.print("$ " + history.peekFirst());
                         continue;
                     }
