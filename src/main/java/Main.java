@@ -420,6 +420,7 @@ public class Main {
         System.out.print("$ ");
         Builtins sharedBuiltins = new Builtins();
         List<String> commands = new ArrayList<>();
+        Deque<String> dq = new ArrayDeque<>();
         try (java.io.PushbackInputStream pin = new java.io.PushbackInputStream(System.in, 8);) {
             StringBuilder sb = new StringBuilder();
             while (true) {
@@ -431,13 +432,27 @@ public class Main {
                     int ch = readKey(pin);
                     if (ch == KEY_UP) {
                         sb.setLength(0);
-                        sb.append(commands.get(commands.size() - 1));
+                        if (dq.size() > 0) {
+                            sb.append(dq.peekFirst());
+                            commands.add(dq.peekFirst());
+                            dq.pollFirst();
+                        } else {
+                            sb.append(commands.get(commands.size() - 1));
+                            dq.offerFirst(commands.get(commands.size() - 1));
+                            commands.removeLast();
+                        }
                         System.out.print("\r\u001B[2K");
                         System.out.print("$ " + sb.toString());
-                        commands.removeLast();
                         continue;
-                    }
-                    if (ch == '\t') {
+                    } else if (ch == KEY_DOWN) {
+                        sb.setLength(0);
+                        sb.append(dq.peekFirst());
+                        commands.add(dq.peekFirst());
+                        dq.pollFirst();
+                        System.out.print("\r\u001B[2K");
+                        System.out.print("$ " + sb.toString());
+                        continue;
+                    } else if (ch == '\t') {
                         String str = sb.toString();
                         if (str.equals("e")) {
                             sb.append("cho ");
