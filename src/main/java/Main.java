@@ -421,12 +421,14 @@ public class Main {
         List<String> commands = new ArrayList<>();
         Deque<String> dq = new ArrayDeque<>();
         HashMap<Path, Integer> tracker = new HashMap<>();
-        try (BufferedReader br = Files.newBufferedReader(getPath(System.getenv("HISTFILE")),
-                StandardCharsets.UTF_8)) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                if (!line.isEmpty()) {
-                    commands.add(line);
+        if (System.getenv().containsKey("HISTFILE")) {
+            try (BufferedReader br = Files.newBufferedReader(getPath(System.getenv("HISTFILE")),
+                    StandardCharsets.UTF_8)) {
+                String line;
+                while ((line = br.readLine()) != null) {
+                    if (!line.isEmpty()) {
+                        commands.add(line);
+                    }
                 }
             }
         }
