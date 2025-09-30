@@ -453,7 +453,7 @@ public class Main {
                         System.out.flush();
                     }
                 }
-                System.out.println("here");
+                System.out.println("hey" + sb.toString());
                 String input = sb.toString();
                 commands.add(input);
                 if (input.equals("history")) {
