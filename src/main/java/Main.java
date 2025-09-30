@@ -420,7 +420,6 @@ public class Main {
         System.out.print("$ ");
         Builtins sharedBuiltins = new Builtins();
         List<String> commands = new ArrayList<>();
-        Deque<String> history = new ArrayDeque<>();
         try (java.io.PushbackInputStream pin = new java.io.PushbackInputStream(System.in, 8);) {
             StringBuilder sb = new StringBuilder();
             while (true) {
@@ -435,14 +434,13 @@ public class Main {
                             commands.add(sb.toString());
                             sb.setLength(0);
                         }
-                        history.offerFirst(commands.get(commands.size() - 1));
                         commands.removeLast();
                         System.out.print("\r\u001B[2K");
-                        System.out.print("$ " + history.peekFirst());
+                        System.out.print("$ " + commands.get(commands.size() - 1));
                         continue;
                     }
-                    while (history.size() > 0) {
-                        commands.add(history.poll());
+                    if (commands.size() > 0) {
+                        sb.append(commands.get(commands.size() - 1));
                     }
                     if (ch == '\t') {
                         String str = sb.toString();
