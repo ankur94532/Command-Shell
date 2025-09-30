@@ -430,8 +430,8 @@ public class Main {
                 sb.setLength(0);
                 while (true) {
                     int ch = readKey(pin);
+                    System.out.println(ch);
                     if (ch == KEY_UP) {
-                        System.out.println("hey");
                         if (sb.length() > 0) {
                             commands.add(sb.toString());
                             sb.setLength(0);
