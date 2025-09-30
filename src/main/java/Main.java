@@ -368,7 +368,7 @@ public class Main {
 
         System.out.print("$ ");
         Builtins sharedBuiltins = new Builtins();
-
+        List<String> commands = new ArrayList<>();
         try (InputStreamReader inputStreamReader = new InputStreamReader(System.in);
                 BufferedReader in = new BufferedReader(inputStreamReader)) {
             StringBuilder sb = new StringBuilder();
@@ -443,6 +443,14 @@ public class Main {
                 }
 
                 String input = sb.toString();
+                commands.add(input);
+                if (input.equals("history")) {
+                    for (int i = 0; i < commands.size(); i++) {
+                        System.out.println(i + 1 + " " + commands.get(i));
+                    }
+                    System.out.print("$ ");
+                    continue;
+                }
                 if (splitPipeline(input).size() > 1) {
                     usePipe(input, sharedBuiltins);
                     System.out.print("$ ");
