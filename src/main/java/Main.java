@@ -421,6 +421,7 @@ public class Main {
         Builtins sharedBuiltins = new Builtins();
         List<String> commands = new ArrayList<>();
         Deque<String> dq = new ArrayDeque<>();
+        HashMap<Path, Integer> tracker = new HashMap<>();
         try (java.io.PushbackInputStream pin = new java.io.PushbackInputStream(System.in, 8);) {
             StringBuilder sb = new StringBuilder();
             while (true) {
@@ -540,13 +541,19 @@ public class Main {
                         continue;
                     }
                     if (inputs.length > 1 && inputs[1].equals("-a")) {
-                        StringBuilder write = new StringBuilder();
-                        for (String command : commands) {
-                            write.append(command + "\n");
+                        int ind = 0;
+                        Path path = getPath(inputs[2]);
+                        if (tracker.containsKey(path)) {
+                            ind = tracker.get(path);
                         }
-                        Files.writeString(getPath(inputs[2]), write.toString(), StandardCharsets.UTF_8,
-                                StandardOpenOption.CREATE, // create if missing
+                        StringBuilder write = new StringBuilder();
+                        for (int i = ind; i < commands.size(); i++) {
+                            write.append(commands.get(i) + "\n");
+                        }
+                        Files.writeString(path, write.toString(), StandardCharsets.UTF_8,
+                                StandardOpenOption.CREATE,
                                 StandardOpenOption.APPEND);
+                        tracker.put(path, commands.size());
                         System.out.print("$ ");
                         continue;
                     }
