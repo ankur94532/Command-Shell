@@ -539,6 +539,17 @@ public class Main {
                         System.out.print("$ ");
                         continue;
                     }
+                    if (inputs.length > 1 && inputs[1].equals("-a")) {
+                        StringBuilder write = new StringBuilder();
+                        for (String command : commands) {
+                            write.append(command + "\n");
+                        }
+                        Files.writeString(getPath(inputs[2]), write.toString(), StandardCharsets.UTF_8,
+                                StandardOpenOption.CREATE, // create if missing
+                                StandardOpenOption.APPEND);
+                        System.out.print("$ ");
+                        continue;
+                    }
                     for (int i = commands.size() - Integer.parseInt(inputs[1]); i < commands.size(); i++) {
                         System.out.println(i + 1 + " " + commands.get(i));
                     }
