@@ -379,12 +379,10 @@ public class Main {
                 while (true) {
                     int ch = pin.read();
                     if (ch == -1005) {
-                        if (sb.length() > 0) {
-                            sb.setLength(0);
-                            continue;
-                        }
+                        sb.setLength(0);
+                        sb.append(commands.get(commands.size() - 1));
                         System.out.print("\r\u001B[2K");
-                        System.out.print("$ " + commands.get(commands.size() - 1));
+                        System.out.print("$ " + sb.toString());
                         commands.removeLast();
                         continue;
                     }
