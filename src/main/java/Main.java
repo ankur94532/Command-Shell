@@ -948,20 +948,27 @@ public class Main {
                 Files.createDirectories(parent);
 
             if (error) {
-                if (append)
-                    Files.write(outPath, new byte[0], StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-                else
-                    Files.write(outPath, new byte[0], StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+                System.out.println(outBuf.toString());
+                System.out.flush();
+                if (append) {
+                    Files.write(outPath, new byte[0],
+                            StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+                } else {
+                    Files.write(outPath, new byte[0],
+                            StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+                }
+                return;
             } else {
                 outBuf.append('\n');
-                if (append)
+                if (append) {
                     Files.write(outPath, outBuf.toString().getBytes(StandardCharsets.UTF_8),
                             StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-                else
+                } else {
                     Files.write(outPath, outBuf.toString().getBytes(StandardCharsets.UTF_8),
                             StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+                }
+                return;
             }
-            return;
         }
 
         if (inputs[0].equals("ls")) {
