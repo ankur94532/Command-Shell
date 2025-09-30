@@ -535,7 +535,7 @@ public class Main {
                         for (String command : commands) {
                             write.append(command + "\n");
                         }
-                        Files.writeString(getPath(inputs[1]), write.toString(), StandardCharsets.UTF_8);
+                        Files.writeString(getPath(inputs[2]), write.toString(), StandardCharsets.UTF_8);
                         System.out.print("$ ");
                         continue;
                     }
