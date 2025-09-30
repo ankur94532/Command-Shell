@@ -519,6 +519,15 @@ public class Main {
                 }
                 if (input.startsWith("history")) {
                     String[] inputs = input.split(" ");
+                    if (inputs[1].equals("-r")) {
+                        try (BufferedReader br = Files.newBufferedReader(getPath(inputs[2]),
+                                StandardCharsets.UTF_8)) {
+                            String line;
+                            while ((line = br.readLine()) != null) {
+                                commands.add(line);
+                            }
+                        }
+                    }
                     for (int i = commands.size() - Integer.parseInt(inputs[1]); i < commands.size(); i++) {
                         System.out.println(i + 1 + " " + commands.get(i));
                     }
@@ -1000,6 +1009,20 @@ public class Main {
         }
         Collections.sort(files);
         return files;
+    }
+
+    static Path getPath(String name) {
+        if (name.contains(java.io.File.separator))
+            return new java.io.File(name).toPath();
+        String path = System.getenv("PATH");
+        if (path == null)
+            return null;
+        for (String dir : path.split(java.io.File.pathSeparator)) {
+            java.io.File f = new java.io.File(dir, name);
+            if (f.isFile() && f.canExecute())
+                return f.toPath();
+        }
+        return null;
     }
 
     static String resolveOnPath(String name) {
