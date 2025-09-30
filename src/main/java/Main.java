@@ -380,8 +380,8 @@ public class Main {
                     int ch = pin.read();
                     if (ch == -1005) {
                         if (sb.length() > 0) {
-                            commands.add(sb.toString());
                             sb.setLength(0);
+                            continue;
                         }
                         System.out.print("\r\u001B[2K");
                         System.out.print("$ " + commands.get(commands.size() - 1));
