@@ -379,6 +379,7 @@ public class Main {
                 while (true) {
                     int ch = pin.read();
                     if (ch == -1001) {
+                        System.out.println("hey");
                         sb.setLength(0);
                         sb.append(commands.get(commands.size() - 1));
                         System.out.print("\r\u001B[2K");
