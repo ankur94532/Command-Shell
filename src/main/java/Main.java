@@ -453,7 +453,6 @@ public class Main {
                         System.out.flush();
                     }
                 }
-                System.out.println("hey" + sb.toString());
                 String input = sb.toString();
                 commands.add(input);
                 if (input.equals("history")) {
@@ -505,7 +504,6 @@ public class Main {
                 }
 
                 if (input.split(" ")[0].equals("echo")) {
-                    System.out.println("hlo");
                     System.out.println(print(input.substring(5)));
                     System.out.print("$ ");
                     continue;
